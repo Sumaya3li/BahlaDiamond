@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         clientViewModel.getAllClient().observe(this, this::setClientList);
+
         insertClients();
     }
 
@@ -96,8 +97,12 @@ public class MainActivity extends AppCompatActivity {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() != null) {
-                tvIdts.setText(result.getContents());
-                setClientName(result.getContents());
+                String currentClientId = result.getContents().trim();
+                tvIdts.setText(currentClientId);
+                clientViewModel.getClientByIdst(currentClientId).observe(
+                        this,
+                        client -> tvName.setText(client.getName())
+                );
             } else {
                 Toast.makeText(this, "No Result", Toast.LENGTH_LONG).show();
             }
@@ -183,16 +188,6 @@ public class MainActivity extends AppCompatActivity {
             List<Client> clients = MyCsvHelper.importClients(this);
             for (Client client : clients) {
                 clientViewModel.insert(client);
-            }
-        }
-    }
-
-    private void setClientName(String clientId) {
-
-        for (Client client : clientList) {
-            if (clientId.trim().equals(client.getIdts())) {
-                Log.d("Clieat Name ():", client.getName());
-                tvName.setText(client.getName());
             }
         }
     }

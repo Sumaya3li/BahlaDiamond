@@ -29,4 +29,8 @@ public class ClientRepository {
     public LiveData<Integer> getRecordCount() {
         return clientDao.recordCount();
     }
+
+    public LiveData<Client> getClientById(String id) {
+        return clientDao.getClientById(id);
+    }
 }

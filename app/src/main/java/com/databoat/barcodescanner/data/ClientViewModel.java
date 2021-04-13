@@ -28,4 +28,8 @@ public class ClientViewModel extends AndroidViewModel {
         return clientRepository.getRecordCount();
     }
 
+    public LiveData<Client> getClientByIdst(String id) {
+        return clientRepository.getClientById(id);
+    }
+
 }
