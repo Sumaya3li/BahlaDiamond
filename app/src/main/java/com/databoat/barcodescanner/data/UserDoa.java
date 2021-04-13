@@ -19,4 +19,7 @@ public interface UserDoa {
 
     @Query("DELETE FROM users")
     void deleteAll();
+
+    @Query("SELECT * FROM users WHERE name = :username")
+    LiveData<User> getUser(String username);
 }

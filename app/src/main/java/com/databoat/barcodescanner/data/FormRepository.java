@@ -34,4 +34,13 @@ public class FormRepository {
     public LiveData<Form> getPrevious(String id, String date){
         return formdoa.getPrevious(id,date);
     }
+
+    public void updateDuplicate(Form form) {
+        DatabaseHelper.databaseWriteExecutor.execute(()-> {
+            formdoa.update(form);
+        });
+    }
+//    public LiveData<Form> getUpdateForm(String idst, String perusal_previous, String perusalCurrent, String note, String date){
+//        return formdoa.updateEntry(idst,perusal_previous,perusalCurrent,note,date);
+//    }
 }

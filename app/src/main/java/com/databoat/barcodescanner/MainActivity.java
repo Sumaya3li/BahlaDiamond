@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.Time;
@@ -40,6 +42,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -52,8 +56,6 @@ public class MainActivity extends AppCompatActivity {
     private EditText etNotes;
     private Button btnSave;
     private Button btnExport;
-    private List<Form> formList;
-    private List<Client> clientList;
     private int recordCount;
     private String currentIdstType;
     private String currentClientId;
@@ -73,28 +75,16 @@ public class MainActivity extends AppCompatActivity {
         btnSave.setEnabled(false);
         setTextWatcher();
 
-        //Extracting the stored data from the bundle
-
         btnScan.setOnClickListener(v -> scanBarcode());
         btnSave.setOnClickListener(v -> saveForm());
         btnExport.setOnClickListener(v -> exportForm());
 
         formViewModel = new ViewModelProvider(this).get(FormViewModel.class);
-        formViewModel.getAllFormData(getDate()).observe(this, new Observer<List<Form>>() {
-            @Override
-            public void onChanged(List<Form> formList) {
-                currentFormData = formList;
-            }
-        });
-
         clientViewModel = new ViewModelProvider(this).get(ClientViewModel.class);
-        clientViewModel.getRecordCount().observe(this, integer -> {
-            recordCount = integer;
-            Log.d("MainActivity: ", "record Count: " + recordCount);
-        });
-        clientViewModel.getAllClient().observe(this, this::setClientList);
 
+        setRecordCount();
         insertClients();
+        getFormData();
     }
 
     @Override
@@ -111,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                         currentIdstType = client.getIdst_type();
                     }
                 });
-                formViewModel.getPrevious(currentClientId, getPreviousDate()).observe(this, new Observer<Form>() {
+                formViewModel.getPrevious(currentClientId, getDate(false)).observe(this, new Observer<Form>() {
                     @Override
                     public void onChanged(Form form) {
                         if (form != null) {
@@ -131,14 +121,6 @@ public class MainActivity extends AppCompatActivity {
 
     /****************************************** HELPER ********************************************/
 
-    private void setFormList(List<Form> form) {
-        formList = form;
-    }
-
-    private void setClientList(List<Client> clients) {
-        clientList = clients;
-    }
-
     private void initViews() {
         tvIdts = findViewById(R.id.tv_idts_value);
         tvName = findViewById(R.id.tv_name_value);
@@ -150,10 +132,20 @@ public class MainActivity extends AppCompatActivity {
         btnExport = findViewById(R.id.btn_export);
     }
 
-    private void setTextWatcher() {
-        tvIdts.addTextChangedListener(generalTextWatcher);
-        etCurrentReading.addTextChangedListener(generalTextWatcher);
-        etNotes.addTextChangedListener(generalTextWatcher);
+    private void setRecordCount() {
+        clientViewModel.getRecordCount().observe(this, integer -> {
+            recordCount = integer;
+            Log.d("MainActivity: ", "record Count: " + recordCount);
+        });
+    }
+
+    private void insertClients() {
+        if (recordCount == 0) {
+            List<Client> clients = MyCsvHelper.importClients(this);
+            for (Client client : clients) {
+                clientViewModel.insert(client);
+            }
+        }
     }
 
     private void scanBarcode() {
@@ -165,30 +157,36 @@ public class MainActivity extends AppCompatActivity {
         integrator.initiateScan();
     }
 
-    private TextWatcher generalTextWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+    private void getFormData() {
+        formViewModel.getAllFormData(getDate(true)).observe(this,
+                formList -> currentFormData = formList
+        );
+    }
 
-        @Override
-        public void afterTextChanged(Editable s) {}
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            enableButton();
+    private String getDate(boolean isCurrent) {
+        Calendar now = Calendar.getInstance();
+        if (!isCurrent) {
+            return String.valueOf(now.get(Calendar.HOUR_OF_DAY) - 1);
         }
+        return String.valueOf(now.get(Calendar.HOUR_OF_DAY));
+    }
 
-        private void enableButton() {
-            String id = tvIdts.getText().toString().trim();
-            String currentReading = etCurrentReading.getText().toString().trim();
-            String notes = etNotes.getText().toString().trim();
-
-            boolean isEmpty = !id.isEmpty() && !currentReading.isEmpty() && !notes.isEmpty();
-            btnSave.setEnabled(isEmpty);
+    private void saveForm() {
+        for (Form form : currentFormData) {
+            if (form.getIdst().equals(tvIdts.getText().toString().trim()) && form.getDate_do().equals(getDate(true))) {
+                formViewModel.updateDuplicate(new Form(
+                        tvIdts.getText().toString(),
+                        tvName.getText().toString(),
+                        tvPreviousReading.getText().toString(),
+                        etCurrentReading.getText().toString(),
+                        currentIdstType,
+                        "0",
+                        etNotes.getText().toString(),
+                        getDate(true))
+                );
+            }
         }
-    };
-
-    void saveForm() {
-        Form form = new Form(
+        Form newForm = new Form(
                 tvIdts.getText().toString(),
                 tvName.getText().toString(),
                 tvPreviousReading.getText().toString(),
@@ -196,28 +194,19 @@ public class MainActivity extends AppCompatActivity {
                 currentIdstType,
                 "0",
                 etNotes.getText().toString(),
-                getDate()
+                getDate(true)
         );
-        formViewModel.insert(form);
+        formViewModel.insert(newForm);
     }
 
-    void insertClients() {
-        if (recordCount == 0) {
-            List<Client> clients = MyCsvHelper.importClients(this);
-            for (Client client : clients) {
-                clientViewModel.insert(client);
-            }
-        }
-    }
-
-    void exportForm()  {
+    private void exportForm() {
         String[] header = {"idst", "name", "perusalLast","perusalFirst","idst_type", "consumption", "note","month/year"};
 //        SimpleDateFormat date_format = new SimpleDateFormat("dd/MM/yyyy");
         String fileName = "BahlaDiamond";
 
         String csv = (
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                        + File.separator + fileName + "-" + getDate() + ".csv"
+                        + File.separator + fileName + "-" + getDate(true) + ".csv"
         );
         CSVWriter writer = null;
         try {
@@ -245,16 +234,35 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private String getPreviousDate() {
-        Calendar now=Calendar.getInstance();
-        return String.valueOf(now.get(Calendar.HOUR_OF_DAY) - 1);
+    /*************************************** TextWatcher ******************************************/
+
+    private void setTextWatcher() {
+        tvIdts.addTextChangedListener(generalTextWatcher);
+        etCurrentReading.addTextChangedListener(generalTextWatcher);
+        etNotes.addTextChangedListener(generalTextWatcher);
     }
 
-    private  String getDate() {
-        Calendar now=Calendar.getInstance();
-        return String.valueOf(now.get(Calendar.HOUR_OF_DAY));
-    }
+    private TextWatcher generalTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
+        @Override
+        public void afterTextChanged(Editable s) {}
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            enableButton();
+        }
+
+        private void enableButton() {
+            String id = tvIdts.getText().toString().trim();
+            String currentReading = etCurrentReading.getText().toString().trim();
+            String notes = etNotes.getText().toString().trim();
+
+            boolean isEmpty = !id.isEmpty() && !currentReading.isEmpty() && !notes.isEmpty();
+            btnSave.setEnabled(isEmpty);
+        }
+    };
 
 //    private  String getDate() {
 //        SimpleDateFormat simpleDateFormat=new SimpleDateFormat(
@@ -262,5 +270,15 @@ public class MainActivity extends AppCompatActivity {
 //                Resources.getSystem().getConfiguration().locale
 //        );
 //        return simpleDateFormat.format(new Date());
+//    }
+
+//    private String getPreviousDate() {
+//        Calendar now=Calendar.getInstance();
+//        return String.valueOf(now.get(Calendar.HOUR_OF_DAY) - 1);
+//    }
+//
+//    private String getDate() {
+//        Calendar now=Calendar.getInstance();
+//        return String.valueOf(now.get(Calendar.HOUR_OF_DAY));
 //    }
 }

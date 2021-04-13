@@ -26,4 +26,8 @@ class UserRepository {
     public LiveData<List<User>> getUsers() {
         return allUsers;
     }
+
+    public LiveData<User> getUserByName(String username) {
+        return userdoa.getUser(username);
+    }
 }

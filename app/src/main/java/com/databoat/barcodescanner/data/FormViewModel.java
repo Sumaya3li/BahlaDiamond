@@ -34,4 +34,12 @@ public class FormViewModel extends AndroidViewModel {
     public LiveData<Form> getPrevious(String id, String date){
         return formRepository.getPrevious(id,date);
     }
+
+    public void updateDuplicate(Form form) {
+        formRepository.updateDuplicate(form);
+    }
+
+//    public LiveData<Form> getUpdateForm(String idst, String perusal_previous, String perusalCurrent, String note, String date){
+//        return formRepository.getUpdateForm(idst,perusal_previous,perusalCurrent,note,date);
+//    }
 }

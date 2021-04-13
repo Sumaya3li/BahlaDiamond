@@ -1,6 +1,7 @@
 package com.databoat.barcodescanner;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
@@ -27,8 +28,6 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnLogin;
     private UserViewModel userViewModel;
 
-    private List<User> usersList;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,9 +38,8 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = findViewById(R.id.btn_login);
 
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
-        userViewModel.getAllUsers().observe(this, this::setUsersList);
-        User user = new User("sahar","12345");
-        userViewModel.insert(user);
+        //User user = new User("sahar","12345");
+        //userViewModel.insert(user);
 
         btnLogin.setOnClickListener(new LogInButtonClicked());
     }
@@ -57,34 +55,28 @@ public class LoginActivity extends AppCompatActivity {
 
     /****************************************** HELPER ********************************************/
 
-    private void setUsersList(List<User> users) {
-        usersList = users;
-    }
-
     private class LogInButtonClicked implements View.OnClickListener {
 
         @Override
         public void onClick(View v) {
-            if (isUserValid()) {
-                Intent send = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(send);
-                finish();
-            } else {
-                Snackbar.make(
-                        findViewById(android.R.id.content),
-                        "Make sure username and password are correct",
-                        Snackbar.LENGTH_LONG).show();
-            }
+            String username = etUsername.getText().toString();
+            userViewModel.getUserByName(username).observe(LoginActivity.this, new Observer<User>() {
+                @Override
+                public void onChanged(User user) {
+                    if (user != null) {
+                        if (user.getPassword().equals(etPassword.getText().toString())) {
+                            Intent send = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(send);
+                            finish();
+                        }
+                    }
+                    Snackbar.make(
+                            findViewById(android.R.id.content),
+                            "Make sure username and password are correct",
+                            Snackbar.LENGTH_LONG).show();
+                }
+            });
         }
 
-        private boolean isUserValid() {
-            for (User user : usersList) {
-                if (user.getName().equals(etUsername.getText().toString()) &&
-                    user.getPassword().equals(etPassword.getText().toString())) {
-                    return true;
-                }
-            }
-            return false;
-        }
     }
 }
