@@ -15,8 +15,8 @@ public interface FormDao {
     @Insert
     void insert(Form form);
 
-    @Query("SELECT * from data ORDER BY id")
-    LiveData<List<Form>> getAllData();
+    @Query("SELECT * from data WHERE date_do = :date ORDER BY id")
+    LiveData<List<Form>> getDataByDate(String date);
 
     @Query("SELECT * FROM data ORDER BY id DESC LIMIT 1")
     LiveData<Form> readPrevious();

@@ -61,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
     private FormViewModel formViewModel;
     private ClientViewModel clientViewModel;
 
+    private List<Form> currentFormData;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,7 +80,12 @@ public class MainActivity extends AppCompatActivity {
         btnExport.setOnClickListener(v -> exportForm());
 
         formViewModel = new ViewModelProvider(this).get(FormViewModel.class);
-        formViewModel.getAllForm().observe(this, this::setFormList);
+        formViewModel.getAllFormData(getDate()).observe(this, new Observer<List<Form>>() {
+            @Override
+            public void onChanged(List<Form> formList) {
+                currentFormData = formList;
+            }
+        });
 
         clientViewModel = new ViewModelProvider(this).get(ClientViewModel.class);
         clientViewModel.getRecordCount().observe(this, integer -> {
@@ -217,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
             writer = new CSVWriter(new FileWriter(csv));
             List<String[]> data = new ArrayList<>();
             data.add(header);
-            for (Form form : formList) {
+            for (Form form : currentFormData) {
                 String[] line = {
                         form.getIdst(), form.getName_id(), form.getPerusal_previous(),
                         form.getPerusal_current(), form.getIdst_type(),

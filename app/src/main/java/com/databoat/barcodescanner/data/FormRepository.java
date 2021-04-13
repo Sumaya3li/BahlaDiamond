@@ -9,14 +9,13 @@ import java.util.List;
 public class FormRepository {
 
     private FormDao formdoa;
-
-    private LiveData<List<Form>> allData;
     private LiveData<Form> lastReading;
+
+    private String date;
 
     FormRepository(Application app){
         DatabaseHelper db = DatabaseHelper.getDatabase(app);
         formdoa = db.formDao();
-        allData = formdoa.getAllData();
         lastReading = formdoa.readPrevious();
     }
 
@@ -26,8 +25,8 @@ public class FormRepository {
         });
     }
 
-    public LiveData<List<Form>> getAllData(){
-        return  allData;
+    public LiveData<List<Form>> getAllDataByDate(String date){
+        return formdoa.getDataByDate(date);
     }
 
     public LiveData<Form> getPreviousReading(){ return lastReading;}

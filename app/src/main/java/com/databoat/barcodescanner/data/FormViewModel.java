@@ -10,16 +10,17 @@ import java.util.List;
 public class FormViewModel extends AndroidViewModel {
 
     private FormRepository formRepository;
-    private final LiveData<List<Form>> allForm;
     private LiveData<Form> persualLast;
+
     public FormViewModel(Application app){
         super(app);
         formRepository  = new FormRepository(app);
-        allForm = formRepository.getAllData();
         persualLast = formRepository.getPreviousReading();
     }
 
-    public LiveData<List<Form>> getAllForm(){return  allForm;}
+    public LiveData<List<Form>> getAllFormData(String date){
+        return  formRepository.getAllDataByDate(date);
+    }
 
     public void insert(Form form){formRepository.insert(form);}
 
