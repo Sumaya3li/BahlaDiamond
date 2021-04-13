@@ -22,4 +22,6 @@ public interface ClientDao {
 
     @Query("SELECT * FROM clients WHERE idts = :clientId")
     LiveData<Client> getClientById(String clientId);
+
+
 }

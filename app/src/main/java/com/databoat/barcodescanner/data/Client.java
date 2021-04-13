@@ -11,10 +11,20 @@ public class Client {
     @NonNull
     String idts;
     String name;
+     String idst_type;
 
-    public Client(String idts, String name) {
+    public String getIdst_type() {
+        return idst_type;
+    }
+
+    public void setIdst_type(String idst_type) {
+        this.idst_type = idst_type;
+    }
+
+    public Client(String idts, String name,String idst_type) {
         this.idts = idts;
         this.name = name;
+        this.idst_type = idst_type;
     }
 
     public String getIdts() {

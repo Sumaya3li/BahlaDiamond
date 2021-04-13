@@ -40,8 +40,8 @@ public class LoginActivity extends AppCompatActivity {
 
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
         userViewModel.getAllUsers().observe(this, this::setUsersList);
-        //User user = new User("sahar","12345");
-        //userViewModel.insert(user);
+        User user = new User("sahar","12345");
+        userViewModel.insert(user);
 
         btnLogin.setOnClickListener(new LogInButtonClicked());
     }

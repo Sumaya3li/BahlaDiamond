@@ -29,4 +29,8 @@ public class FormViewModel extends AndroidViewModel {
     public LiveData<Form> getLastPersual() {
         return persualLast;
     }
+
+    public LiveData<Form> getPrevious(String id, String date){
+        return formRepository.getPrevious(id,date);
+    }
 }

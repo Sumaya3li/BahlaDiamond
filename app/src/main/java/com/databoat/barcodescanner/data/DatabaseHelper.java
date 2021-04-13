@@ -11,7 +11,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {User.class, Form.class, Client.class}, version = 4, exportSchema = false)
+@Database(entities = {User.class, Form.class, Client.class}, version = 6, exportSchema = false)
 public abstract class DatabaseHelper extends RoomDatabase {
 
     public abstract UserDoa userDao();

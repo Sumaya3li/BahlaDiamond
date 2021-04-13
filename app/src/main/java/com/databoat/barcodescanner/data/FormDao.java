@@ -20,4 +20,7 @@ public interface FormDao {
 
     @Query("SELECT * FROM data ORDER BY id DESC LIMIT 1")
     LiveData<Form> readPrevious();
+
+    @Query("SELECT * FROM data WHERE idst = :id AND date_do = :date")
+    LiveData<Form> getPrevious(String id, String date);
 }

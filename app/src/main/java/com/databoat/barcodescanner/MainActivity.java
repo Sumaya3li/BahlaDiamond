@@ -1,10 +1,12 @@
 package com.databoat.barcodescanner;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.format.Time;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,8 +33,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
     private List<Form> formList;
     private List<Client> clientList;
     private int recordCount;
+    private String currentIdstType;
+    private String currentClientId;
 
     private FormViewModel formViewModel;
     private ClientViewModel clientViewModel;
@@ -70,22 +79,11 @@ public class MainActivity extends AppCompatActivity {
 
         formViewModel = new ViewModelProvider(this).get(FormViewModel.class);
         formViewModel.getAllForm().observe(this, this::setFormList);
-        formViewModel.getLastPersual().observe(this, new Observer<Form>() {
-            @Override
-            public void onChanged(Form form) {
-                if (form != null) {
-                    tvPreviousReading.setText(form.getPerusal_current());
-                }
-            }
-        });
 
         clientViewModel = new ViewModelProvider(this).get(ClientViewModel.class);
-        clientViewModel.getRecordCount().observe(this, new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer integer) {
-                recordCount = integer;
-                Log.d("MainActivity: ", "record Count: " + recordCount);
-            }
+        clientViewModel.getRecordCount().observe(this, integer -> {
+            recordCount = integer;
+            Log.d("MainActivity: ", "record Count: " + recordCount);
         });
         clientViewModel.getAllClient().observe(this, this::setClientList);
 
@@ -97,12 +95,25 @@ public class MainActivity extends AppCompatActivity {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() != null) {
-                String currentClientId = result.getContents().trim();
+                currentClientId = result.getContents().trim();
                 tvIdts.setText(currentClientId);
-                clientViewModel.getClientByIdst(currentClientId).observe(
-                        this,
-                        client -> tvName.setText(client.getName())
-                );
+                clientViewModel.getClientByIdst(currentClientId).observe(this, new Observer<Client>() {
+                    @Override
+                    public void onChanged(Client client) {
+                        tvName.setText(client.getName());
+                        currentIdstType = client.getIdst_type();
+                    }
+                });
+                formViewModel.getPrevious(currentClientId, getPreviousDate()).observe(this, new Observer<Form>() {
+                    @Override
+                    public void onChanged(Form form) {
+                        if (form != null) {
+                            Log.d("CLIENT CURRENT ", form.getPerusal_current());
+                            Log.d("CLIENT PREVIOUS ", form.getPerusal_previous());
+                            tvPreviousReading.setText(form.getPerusal_current());
+                        }
+                    }
+                });
             } else {
                 Toast.makeText(this, "No Result", Toast.LENGTH_LONG).show();
             }
@@ -173,12 +184,12 @@ public class MainActivity extends AppCompatActivity {
         Form form = new Form(
                 tvIdts.getText().toString(),
                 tvName.getText().toString(),
-                "0",
+                tvPreviousReading.getText().toString(),
                 etCurrentReading.getText().toString(),
+                currentIdstType,
                 "0",
-                "جالون"  ,
-                "0",
-                etNotes.getText().toString()
+                etNotes.getText().toString(),
+                getDate()
         );
         formViewModel.insert(form);
     }
@@ -193,11 +204,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void exportForm()  {
-        String[] header = {"idst", "name", "perusal", "consumption", "note"};
+        String[] header = {"idst", "name", "perusalLast","perusalFirst","idst_type", "consumption", "note","month/year"};
 //        SimpleDateFormat date_format = new SimpleDateFormat("dd/MM/yyyy");
         String fileName = "BahlaDiamond";
 
-        String csv = (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator + fileName + ".csv");
+        String csv = (
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                        + File.separator + fileName + "-" + getDate() + ".csv"
+        );
         CSVWriter writer = null;
         try {
             writer = new CSVWriter(new FileWriter(csv));
@@ -205,8 +219,9 @@ public class MainActivity extends AppCompatActivity {
             data.add(header);
             for (Form form : formList) {
                 String[] line = {
-                        form.getIdst(), form.getName_id(), form.getPerusal_current(),
-                        form.getConsumption(), form.getNote()
+                        form.getIdst(), form.getName_id(), form.getPerusal_previous(),
+                        form.getPerusal_current(), form.getIdst_type(),
+                        form.getConsumption(), form.getNote(), form.getDate_do()
                 };
                 data.add(line);
             }
@@ -222,4 +237,23 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+    private String getPreviousDate() {
+        Calendar now=Calendar.getInstance();
+        return String.valueOf(now.get(Calendar.HOUR_OF_DAY) - 1);
+    }
+
+    private  String getDate() {
+        Calendar now=Calendar.getInstance();
+        return String.valueOf(now.get(Calendar.HOUR_OF_DAY));
+    }
+
+
+//    private  String getDate() {
+//        SimpleDateFormat simpleDateFormat=new SimpleDateFormat(
+//                "MM/yyyy",
+//                Resources.getSystem().getConfiguration().locale
+//        );
+//        return simpleDateFormat.format(new Date());
+//    }
 }

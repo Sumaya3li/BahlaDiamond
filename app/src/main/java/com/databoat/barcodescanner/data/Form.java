@@ -4,10 +4,7 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "data" , foreignKeys = @ForeignKey(entity = User.class,
-parentColumns = "name",
-        childColumns = "name_id"
-))
+@Entity(tableName = "data")
 
 public class Form {
     @PrimaryKey(autoGenerate = true)
@@ -16,20 +13,20 @@ public class Form {
     private String name_id;
     private String perusal_previous;
     private String perusal_current;
-    private String perusal;
     private String idst_type;
     private String consumption;
     private String note;
+    private String date_do;
 
-    public Form(String idst, String name_id, String perusal_previous, String perusal_current, String perusal, String idst_type, String consumption, String note) {
+    public Form(String idst, String name_id, String perusal_previous, String perusal_current, String idst_type, String consumption, String note, String date_do) {
         this.idst = idst;
         this.name_id = name_id;
         this.perusal_previous = perusal_previous;
         this.perusal_current = perusal_current;
-        this.perusal = perusal;
         this.idst_type = idst_type;
         this.consumption = consumption;
         this.note = note;
+        this.date_do = date_do;
     }
 
     public int getId() {
@@ -72,14 +69,6 @@ public class Form {
         this.perusal_current = perusal_current;
     }
 
-    public String getPerusal() {
-        return perusal;
-    }
-
-    public void setPerusal(String perusal) {
-        this.perusal = perusal;
-    }
-
     public String getIdst_type() {
         return idst_type;
     }
@@ -102,5 +91,13 @@ public class Form {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public String getDate_do() {
+        return date_do;
+    }
+
+    public void setDate_do(String date_do) {
+        this.date_do = date_do;
     }
 }

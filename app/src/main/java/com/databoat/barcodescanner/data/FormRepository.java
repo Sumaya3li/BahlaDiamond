@@ -31,4 +31,8 @@ public class FormRepository {
     }
 
     public LiveData<Form> getPreviousReading(){ return lastReading;}
+
+    public LiveData<Form> getPrevious(String id, String date){
+        return formdoa.getPrevious(id,date);
+    }
 }
