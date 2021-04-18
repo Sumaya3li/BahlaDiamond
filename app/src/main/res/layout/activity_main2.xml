@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,177 +7,219 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/tv_main_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="قم بادخال البيانات"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.476"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints" />
-
-    <RelativeLayout
-        android:id="@+id/rl_contract_number"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_activity_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layoutDirection="rtl"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_main_title">
+        android:layout_margin="16dp">
+
+        <TextView
+            android:id="@+id/tv_main_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="قم بادخال البيانات"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.476"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints" />
+
+        <RelativeLayout
+            android:id="@+id/rl_contract_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/customborder"
+            android:layoutDirection="rtl"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_main_title">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true">
+
+                <TextView
+                    android:id="@+id/tv_idts"
+                    style="@style/customFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:text="رقم العقد" />
+
+                <EditText
+                    android:id="@+id/tv_idts_value"
+                    style="@style/customFont"
+                    android:layout_width="200dp"
+                    android:inputType="number"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp" />
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btn_scan"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginStart="50dp"
+                android:contentDescription="scan"
+                app:srcCompat="@android:drawable/ic_menu_camera" />
+        </RelativeLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/ll_name"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true">
+            android:layout_marginTop="8dp"
+            android:background="@drawable/customborder"
+            android:layoutDirection="rtl"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rl_contract_number">
 
             <TextView
-                android:id="@+id/tv_idts"
+                android:id="@+id/tv_name"
+                style="@style/customFont"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="رقم العقد"
-                android:textSize="18sp" />
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="الاسم" />
 
-            <TextView
-                android:id="@+id/tv_idts_value"
-                android:layout_width="wrap_content"
+            <EditText
+                android:id="@+id/tv_name_value"
+                style="@style/customFont"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="18sp" />
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp" />
         </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/btn_scan"
-            android:layout_width="37dp"
-            android:layout_height="37dp"
-            android:layout_marginStart="50dp"
-            android:layout_alignParentLeft="true"
-            android:contentDescription="scan"
-            app:srcCompat="@android:drawable/ic_menu_camera" />
-    </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/ll_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layoutDirection="rtl"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rl_contract_number">
-
-        <TextView
-            android:id="@+id/tv_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="الاسم"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/tv_name_value"
+        <LinearLayout
+            android:id="@+id/ll_previous_reading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp" />
-    </LinearLayout>
+            android:layout_marginTop="8dp"
+            android:background="@drawable/customborder"
+            android:layoutDirection="rtl"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ll_name">
 
-    <LinearLayout
-        android:id="@+id/ll_previous_reading"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layoutDirection="rtl"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ll_name">
+            <TextView
+                android:id="@+id/tv_previous_reading"
+                style="@style/customFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="القراءة السابقة" />
 
-        <TextView
-            android:id="@+id/tv_previous_reading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="القراءة السابقة"
-            android:textSize="18sp" />
+            <TextView
+                android:id="@+id/tv_previous_reading_value"
+                style="@style/customFont"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp" />
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_previous_reading_value"
+        <LinearLayout
+            android:id="@+id/ll_current_reading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp" />
-    </LinearLayout>
+            android:layout_marginTop="8dp"
+            android:background="@drawable/customborder"
+            android:layoutDirection="rtl"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ll_previous_reading">
 
-    <LinearLayout
-        android:id="@+id/ll_current_reading"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layoutDirection="rtl"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ll_previous_reading">
+            <TextView
+                android:id="@+id/tv_current_reading"
+                style="@style/customFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="القراءة الحالية" />
 
-        <TextView
-            android:id="@+id/tv_current_reading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="القراءة الحالية"
-            android:textSize="18sp" />
+            <EditText
+                android:id="@+id/et_current_reading"
+                style="@style/customFont"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:paddingEnd="8dp" />
+        </LinearLayout>
 
-        <EditText
-            android:id="@+id/et_current_reading"
+        <LinearLayout
+            android:id="@+id/ll_notes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:inputType="number" />
-    </LinearLayout>
+            android:layout_marginTop="8dp"
+            android:background="@drawable/customborder"
+            android:layoutDirection="rtl"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ll_current_reading">
 
-    <LinearLayout
-        android:id="@+id/ll_notes"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layoutDirection="rtl"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ll_current_reading">
+            <TextView
+                android:id="@+id/tv_notes"
+                style="@style/customFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:text="الملاحظات" />
 
-        <TextView
-            android:id="@+id/tv_notes"
+            <EditText
+                android:id="@+id/et_notes"
+                style="@style/customFont"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:gravity="top|start"
+                android:inputType="textMultiLine"
+                android:paddingEnd="8dp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_save"
+            style="@style/customFont"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="الملاحظات"
-            android:textSize="18sp" />
+            android:layout_marginTop="32dp"
+            android:background="@drawable/custombutton"
+            android:text="حفظ"
+            android:textColor="#2CCC00"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ll_notes" />
 
-        <EditText
-            android:id="@+id/et_notes"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:textSize="18sp"
-            android:inputType="textMultiLine"
-            android:gravity="top|start"/>
-    </LinearLayout>
+        <Button
+            android:id="@+id/btn_export"
+            style="@style/customFont"
+            android:layout_width="218dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="40dp"
+            android:background="@drawable/custombutton"
+            android:text="تحميل القراءات&#10;CSV"
+            android:textColor="#CD1111"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_save" />
 
-    <Button
-        android:id="@+id/btn_save"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="حفظ"
-        android:textSize="18sp"
-        android:textColor="#2CCC00"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ll_notes" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <Button
-        android:id="@+id/btn_export"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="تحميل القراءات&#10;CSV"
-        android:textSize="18sp"
-        android:textColor="#CD1111"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_save" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

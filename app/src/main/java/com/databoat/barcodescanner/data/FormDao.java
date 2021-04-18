@@ -5,6 +5,7 @@ import android.app.Application;
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
@@ -16,7 +17,7 @@ public interface FormDao {
     @Insert
     void insert(Form form);
 
-    @Query("SELECT * from data WHERE date_do = :date ORDER BY id")
+    @Query("SELECT * from data WHERE date_do = :date GROUP BY idst,date_do ORDER BY id")
     LiveData<List<Form>> getDataByDate(String date);
 
     @Query("SELECT * FROM data ORDER BY id DESC LIMIT 1")
@@ -27,6 +28,12 @@ public interface FormDao {
 
     @Update
     void update(Form form);
+
+    @Query("SELECT * FROM data WHERE idst = :idst ORDER BY id DESC LIMIT 1")
+    LiveData<Form> getLastReading(String idst);
+
+    @Query("SELECT * FROM data WHERE date_do = :date")
+    LiveData<List<Form>> getListPrevious(String date);
 
     //@Query("UPDATE data SET perusal_current=:perusalCurrent, perusal_previous=:perusal_previous, note = :note WHERE idst LIKE :idst AND date_do LIKE :date")
     //LiveData<Form> updateEntry(String idst, String perusal_previous, String perusalCurrent, String note, String date);

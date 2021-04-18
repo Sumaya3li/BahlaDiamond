@@ -28,7 +28,7 @@ public class MyCsvHelper {
                 // Split the line into different tokens (using the comma as a separator).
                 String[] tokens = line.split(",");
 
-                Client client = new Client(tokens[0], tokens[1],tokens[2]);
+                Client client = new Client(tokens[0], tokens[1],tokens[5]);
                 clientList.add(client);
 
                 Log.d("MyCsvHelper", "User" + client.getName());

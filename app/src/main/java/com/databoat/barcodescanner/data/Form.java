@@ -5,7 +5,6 @@ import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "data")
-
 public class Form {
     @PrimaryKey(autoGenerate = true)
     private int id;

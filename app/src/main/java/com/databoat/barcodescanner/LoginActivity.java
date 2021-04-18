@@ -38,8 +38,8 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = findViewById(R.id.btn_login);
 
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
-        //User user = new User("sahar","12345");
-        //userViewModel.insert(user);
+        User user = new User("admin","12345");
+        userViewModel.insert(user);
 
         btnLogin.setOnClickListener(new LogInButtonClicked());
     }
@@ -59,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View v) {
-            String username = etUsername.getText().toString();
+            String username = etUsername.getText().toString().toLowerCase().trim();
             userViewModel.getUserByName(username).observe(LoginActivity.this, new Observer<User>() {
                 @Override
                 public void onChanged(User user) {
