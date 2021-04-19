@@ -272,53 +272,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void exportForm() {
-        Log.d("BUTTON EXPORT CLICKED", "EXPORT");
-        String[] header = {"idst", "name", "perusalLast","perusalFirst","idst_type", "consumption", "note","month/year"};
-//        SimpleDateFormat date_format = new SimpleDateFormat("dd/MM/yyyy");
+        String header = "idst, NAMEID, Perusallast, Perusalfirst, idsttype, Consumption, NOTE, MONTH/YEAR";
         String fileName = "BahlaDiamond";
-
-        String csv = (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator + fileName + "-" + getDate(true) + ".csv");
-
-        // OLD
-//        CSVWriter writer = null;
-//        try {
-//            writer = new CSVWriter(new FileWriter(csv));
-//            List<String[]> data = new ArrayList<>();
-//            data.add(header);
-//            for (Form form : currentFormData) {
-////                formViewModel.getPrevious(form.getIdst(), getDate(false)).observe(this, new Observer<Form>() {
-////                    @Override
-////                    public void onChanged(Form previousForm) {
-////                        Log.d("CLIENT CURRENT ", previousForm.getPerusal_current());
-////                        Log.d("CLIENT PREVIOUS ", previousForm.getPerusal_previous());
-////                        previousPerusal = previousForm.getPerusal_current();
-////                        Log.d("previousPerusal ", previousPerusal);
-////                    }
-////                });
-//                for (Form previous : previousReadings) {
-//                    if (previous.getIdst().equals(form.getIdst())) {
-//                        previousPerusal = previous.getPerusal_current();
-//                    }
-//                }
-//                String[] line = {
-//                        form.getIdst(), form.getName_id(), previousPerusal,
-//                        form.getPerusal_current(), form.getIdst_type(),
-//                        form.getConsumption(), form.getNote(), form.getDate_do()
-//                };
-//                data.add(line);
-//            }
-//            writer.writeAll(data);
-//            if (!csv.isEmpty()) {
-//
-//                Snackbar.make(
-//                        findViewById(android.R.id.content),
-//                        "File saved",
-//                        Snackbar.LENGTH_LONG).show();
-//            }
-//            writer.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        String csv = (
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                        + File.separator + fileName + "-" + getDate(true) + ".csv"
+        );
 
         // Write Byte Order Mark (BOM) for UTF-8 at the start
         OutputStream os = null;
@@ -338,7 +297,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Write csv file header
         PrintWriter w = new PrintWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
-        w.println(Arrays.toString(header));  // TODO: change this string array
+        w.println(header);
 
         // Write csv file contents line by line
         for (Form form : currentFormData) {
@@ -347,12 +306,14 @@ public class MainActivity extends AppCompatActivity {
                     previousPerusal = previous.getPerusal_current();
                 }
             }
-            String[] line = {  // TODO: change this string array
-                    form.getIdst(), form.getName_id(), previousPerusal,
+            String previous = previousPerusal != null ? previousPerusal : "";
+            List<String> record = Arrays.asList(
+                    form.getIdst(), form.getName_id(), previous,
                     form.getPerusal_current(), form.getIdst_type(),
-                    form.getConsumption(), form.getNote(), form.getDate_do()
-            };
-            w.println(Arrays.toString(line));
+                    form.getConsumption(), form.getNote(), form.getDate_do());
+
+            String recordString = record.toString();
+            w.println(recordString.substring(1, recordString.length() - 1));
         }
         w.flush();
         w.close();
