@@ -17,10 +17,9 @@ public interface ClientDao {
     @Query("SELECT * FROM clients ")
     LiveData<List<Client>> getClient();
 
-    @Query("SELECT COUNT(*) FROM clients")
-    LiveData<Integer> recordCount();
-
     @Query("SELECT * FROM clients WHERE idts = :clientId")
     LiveData<Client> getClientById(String clientId);
 
+    @Query("SELECT COUNT(*) FROM clients")
+    int getRecordCount();
 }

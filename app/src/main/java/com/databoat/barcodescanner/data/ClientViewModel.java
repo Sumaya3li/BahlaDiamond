@@ -12,6 +12,7 @@ public class ClientViewModel extends AndroidViewModel {
 
     private ClientRepository clientRepository;
     private LiveData<List<Client>> allClient;
+
     public ClientViewModel(@NonNull Application application) {
         super(application);
         clientRepository = new ClientRepository(application);
@@ -23,10 +24,6 @@ public class ClientViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<Client>> getAllClient(){return  allClient;}
-
-    public LiveData<Integer> getRecordCount() {
-        return clientRepository.getRecordCount();
-    }
 
     public LiveData<Client> getClientByIdst(String id) {
         return clientRepository.getClientById(id);

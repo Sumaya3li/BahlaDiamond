@@ -9,7 +9,7 @@ import java.util.List;
 
 public class UserViewModel extends AndroidViewModel {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     private final LiveData<List<User>> allUsers;
 
     public UserViewModel(Application app){
@@ -28,5 +28,9 @@ public class UserViewModel extends AndroidViewModel {
 
     public LiveData<User> getUserByName(String name) {
         return userRepository.getUserByName(name);
+    }
+
+    public LiveData<Integer> getRecordCount() {
+        return userRepository.getRecordCount();
     }
 }

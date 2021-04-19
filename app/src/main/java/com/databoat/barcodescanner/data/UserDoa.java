@@ -22,4 +22,7 @@ public interface UserDoa {
 
     @Query("SELECT * FROM users WHERE name = :username")
     LiveData<User> getUser(String username);
+
+    @Query("SELECT COUNT(*) FROM users")
+    LiveData<Integer> recordCount();
 }

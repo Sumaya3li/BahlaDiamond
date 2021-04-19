@@ -7,10 +7,11 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 public class ClientRepository {
+
     private ClientDao clientDao;
     private LiveData<List<Client>> allclient;
 
-    ClientRepository(Application app) {
+    public ClientRepository(Application app) {
         DatabaseHelper db = DatabaseHelper.getDatabase(app);
         clientDao = db.clientDao();
         allclient = clientDao.getClient();
@@ -26,11 +27,11 @@ public class ClientRepository {
         return allclient;
     }
 
-    public LiveData<Integer> getRecordCount() {
-        return clientDao.recordCount();
-    }
-
     public LiveData<Client> getClientById(String id) {
         return clientDao.getClientById(id);
+    }
+
+    public int getNumFiles() {
+        return clientDao.getRecordCount();
     }
 }

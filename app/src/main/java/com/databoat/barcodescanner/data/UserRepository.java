@@ -30,4 +30,8 @@ class UserRepository {
     public LiveData<User> getUserByName(String username) {
         return userdoa.getUser(username);
     }
+
+    public LiveData<Integer> getRecordCount() {
+        return userdoa.recordCount();
+    }
 }

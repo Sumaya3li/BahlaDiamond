@@ -36,5 +36,4 @@ public abstract class DatabaseHelper extends RoomDatabase {
         }
         return INSTANCE;
     }
-    // Removed executor
 }
