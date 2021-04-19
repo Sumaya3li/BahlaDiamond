@@ -10,6 +10,7 @@ import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.databoat.barcodescanner.data.Client;
@@ -78,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         setTextWatcher();
 
         btnScan.setOnClickListener(v -> scanBarcode());
-        btnSave.setOnClickListener(v -> saveForm());
+        btnSave.setOnClickListener(new SaveButtonClick());
         btnExport.setOnClickListener(v -> writeFile());
 
         formViewModel = new ViewModelProvider(this).get(FormViewModel.class);
@@ -190,12 +192,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setPreviousReading(String id) {
-        formViewModel.getPreviousReadingById(id).observe(MainActivity.this, form -> {
-            if (form != null) {
-                tvPreviousReading.setText(form.getPerusal_current());
-            } else {
-                tvPreviousReading.setText("");
-            }
+        formViewModel.getPreviousReadingById(id).observe(
+                MainActivity.this, new Observer<Form>() {
+                @Override
+                public void onChanged(Form form) {
+                    if (form != null) {
+                        tvPreviousReading.setText(form.getPerusal_current());
+                    } else {
+                        tvPreviousReading.setText("");
+                    }
+                    formViewModel.getPreviousReadingById(id).removeObserver(this);
+                }
         });
     }
 
@@ -206,25 +213,6 @@ public class MainActivity extends AppCompatActivity {
         integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
         integrator.setPrompt("Scanning Code");
         integrator.initiateScan();
-    }
-
-    private void saveForm() {
-        String note = etNotes.getText().toString().trim();
-        if (note.isEmpty()) {
-            note = "-";
-        }
-        Form newForm = new Form(
-                tvIdts.getText().toString(),
-                tvName.getText().toString(),
-                tvPreviousReading.getText().toString(),
-                etCurrentReading.getText().toString(),
-                currentIdstType,
-                "0",
-                note,
-                getDate(true)
-        );
-        formViewModel.insert(newForm);
-        Toast.makeText(this, tvIdts.getText().toString() + " تم الحفظ", Toast.LENGTH_LONG).show();
     }
 
     private void writeFile() {
@@ -319,6 +307,46 @@ public class MainActivity extends AppCompatActivity {
 //        Calendar now=Calendar.getInstance();
 //        return String.valueOf(now.get(Calendar.HOUR_OF_DAY));
 //    }
+
+    /***************************************** Button *********************************************/
+
+    private class SaveButtonClick implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            saveForm();
+            clearForm();
+            Toast.makeText(
+                    MainActivity.this, tvIdts.getText().toString() + " تم الحفظ",
+                    Toast.LENGTH_LONG).show();
+        }
+
+        private void saveForm() {
+            String note = etNotes.getText().toString().trim();
+            if (note.isEmpty()) {
+                note = "-";
+            }
+            Form newForm = new Form(
+                    tvIdts.getText().toString(),
+                    tvName.getText().toString(),
+                    tvPreviousReading.getText().toString(),
+                    etCurrentReading.getText().toString(),
+                    currentIdstType,
+                    "0",
+                    note,
+                    getDate(true)
+            );
+            formViewModel.insert(newForm);
+        }
+
+        private void clearForm() {
+            tvIdts.setText("");
+            tvName.setText("");
+            tvPreviousReading.setText("");
+            etCurrentReading.setText("");
+            etNotes.setText("");
+        }
+    }
 
     /*************************************** TextWatcher ******************************************/
 
