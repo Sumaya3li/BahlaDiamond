@@ -14,7 +14,7 @@ public class ClientRepository {
     public ClientRepository(Application app) {
         DatabaseHelper db = DatabaseHelper.getDatabase(app);
         clientDao = db.clientDao();
-        allclient = clientDao.getClient();
+        allclient = clientDao.getAllClients();
     }
 
     void insert(Client client) {
@@ -33,5 +33,9 @@ public class ClientRepository {
 
     public int getNumFiles() {
         return clientDao.getRecordCount();
+    }
+
+    public LiveData<List<Client>> getClientList() {
+        return clientDao.getClientList();
     }
 }

@@ -23,10 +23,16 @@ public class ClientViewModel extends AndroidViewModel {
         clientRepository.insert(client);
     }
 
-    public LiveData<List<Client>> getAllClient(){return  allClient;}
+    public LiveData<List<Client>> getAllClient() {
+        return  allClient;
+    }
 
     public LiveData<Client> getClientByIdst(String id) {
         return clientRepository.getClientById(id);
+    }
+
+    public LiveData<List<Client>> getClientList() {
+        return clientRepository.getClientList();
     }
 
 }

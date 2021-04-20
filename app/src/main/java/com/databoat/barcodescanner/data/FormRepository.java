@@ -18,7 +18,7 @@ public class FormRepository {
     private FormDao formdoa;
     private LiveData<Form> lastReading;
 
-    FormRepository(Application app){
+    public FormRepository(Application app){
         DatabaseHelper db = DatabaseHelper.getDatabase(app);
         formdoa = db.formDao();
         lastReading = formdoa.readPrevious();
@@ -46,6 +46,20 @@ public class FormRepository {
 
     public LiveData<Form> getPreviousPerusal(String id, String date) {
         return formdoa.getPrevious(id, date);
+    }
+
+    public LiveData<List<Form>> getAll() {
+        return formdoa.getAll();
+    }
+
+    public void deleteAll() {
+        DatabaseHelper.databaseWriteExecutor.execute(()->{
+            formdoa.deleteAll();
+        });
+    }
+
+    public int getNumFiles() {
+        return formdoa.getCount();
     }
 
 }

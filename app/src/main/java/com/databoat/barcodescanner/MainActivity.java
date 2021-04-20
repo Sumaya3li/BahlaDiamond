@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -29,6 +30,7 @@ import com.databoat.barcodescanner.data.ClientRepository;
 import com.databoat.barcodescanner.data.ClientViewModel;
 import com.databoat.barcodescanner.data.Form;
 import com.databoat.barcodescanner.data.FormViewModel;
+import com.databoat.barcodescanner.util.ClientHelper;
 import com.databoat.barcodescanner.util.MyCsvHelper;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -65,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
     private List<Form> currentFormData;
     private List<Form> previousReadings;
 
+    private List<Client> allClients;
+
     private String previousPerusal;
 
     private static final int PERMISSION_REQUEST_CODE = 1000;
@@ -88,8 +92,12 @@ public class MainActivity extends AppCompatActivity {
 
         formViewModel.getListPrevious(getDate(false)).observe(this, this::getPreviousReadings);
 
+
         getRecordCount();
+//        getAllClients();
         getFormData();
+        updatePreviousPerusal();
+//        insertPreviousReadings();
     }
 
     @Override
@@ -191,20 +199,72 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void setPreviousReading(String id) {
-//        formViewModel.getPreviousReadingById(id).observe(
-//                MainActivity.this, new Observer<Form>() {
+    // TODO: NEW START
+
+
+
+//    private void getAllClients() {
+//        clientViewModel.getAllClient().observe(this, this::setAllClients);
+//    }
+//
+//    private void setAllClients(List<Client> allClients) {
+//        this.allClients = allClients;
+//    }
+
+    private void updatePreviousPerusal() {
+        List<String> clientIds = MyCsvHelper.getClientIds(MainActivity.this);
+        for (String id : clientIds) {
+            Log.d("CLIENT ID", id.trim());
+            formViewModel.getPreviousReadingById(id.trim()).observe(this, new Observer<Form>() {
+                @Override
+                public void onChanged(Form form) {
+                    if (form != null) {
+                        Log.d("CLIENT ID", form.getName_id().trim() + form.getDate_do());
+//                        if (!form.getDate_do().equals(getDate(false))) {
+//                            formViewModel.insert(new Form(
+//                                    form.getIdst(), form.getName_id(), form.getPerusal_previous(),
+//                                form.getPerusal_current(), form.getIdst_type(), form.getConsumption(),
+//                                form.getNote(), getDate(false)));
+//                        }
+                    }
+                }
+            });
+        }
+//        for (Client client : allClients) {
+//            formViewModel.getPreviousReadingById(client.getIdts()).observe(this, new Observer<Form>() {
 //                @Override
 //                public void onChanged(Form form) {
-//                    if (form != null) {
-//                        tvPreviousReading.setText(form.getPerusal_current());
-//                    } else {
-//                        tvPreviousReading.setText("");
+//                    if (!form.getDate_do().equals(getDate(true))) {
+//                        formViewModel.insert(new Form(
+//                                form.getIdst(), form.getName_id(), form.getPerusal_previous(),
+//                                form.getPerusal_current(), form.getIdst_type(), form.getConsumption(),
+//                                form.getNote(), getDate(true)
+//                        ));
 //                    }
-//                    formViewModel.getPreviousReadingById(id).removeObserver(this);
 //                }
-//        });
+//            });
+//        }
+    }
 
+//    private void insertPreviousReadings() {
+//        List<ClientHelper> clientHelperList = MyCsvHelper.getClientInfo(MainActivity.this);
+//
+//        for (ClientHelper client : clientHelperList) {
+//            for (Form form : currentFormData) {
+//                if (client.getIdst().equals(form.getIdst())) {
+//                    break;
+//                } else {
+//                    formViewModel.insert(new Form(
+//                            client.getIdst(), client.getName_id(), client.getPerusal_previous(),
+//                            client.getPerusal_current(), client.getIdst_type(),
+//                            client.getConsumption(), client.getNote(), getDate(false)));
+//                }
+//            }
+//        }
+//    }
+    // TODO: NEW END
+
+    private void setPreviousReading(String id) {
         formViewModel.getPreviousPerusal(id, getDate(false)).observe(
                 this, new Observer<Form>() {
             @Override
@@ -217,6 +277,18 @@ public class MainActivity extends AppCompatActivity {
                 formViewModel.getPreviousReadingById(id).removeObserver(this);
             }
         });
+        //        formViewModel.getPreviousReadingById(id).observe(
+//                MainActivity.this, new Observer<Form>() {
+//                @Override
+//                public void onChanged(Form form) {
+//                    if (form != null) {
+//                        tvPreviousReading.setText(form.getPerusal_current());
+//                    } else {
+//                        tvPreviousReading.setText("");
+//                    }
+//                    formViewModel.getPreviousReadingById(id).removeObserver(this);
+//                }
+//        });
     }
 
     private void scanBarcode() {

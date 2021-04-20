@@ -186,7 +186,7 @@
                 android:id="@+id/et_notes"
                 style="@style/customFont"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="100dp"
                 android:gravity="top|start"
                 android:inputType="textMultiLine"
                 android:paddingEnd="8dp" />

@@ -14,12 +14,15 @@ public interface ClientDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Client client);
 
-    @Query("SELECT * FROM clients ")
-    LiveData<List<Client>> getClient();
+    @Query("SELECT * FROM clients")
+    LiveData<List<Client>> getAllClients();
 
     @Query("SELECT * FROM clients WHERE idts = :clientId")
     LiveData<Client> getClientById(String clientId);
 
     @Query("SELECT COUNT(*) FROM clients")
     int getRecordCount();
+
+    @Query("SELECT * FROM clients")
+    LiveData<List<Client>> getClientList();
 }

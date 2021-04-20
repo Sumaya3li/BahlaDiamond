@@ -2,6 +2,7 @@ package com.databoat.barcodescanner;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -34,7 +35,14 @@ public class LoginActivity extends AppCompatActivity {
 
         Button btnLogin = findViewById(R.id.btn_login);
         btnLogin.setOnClickListener(new LogInButtonClicked());
-
+        SharedPreferences pref=getSharedPreferences("",MODE_PRIVATE);
+        boolean isLoggedIn=pref.getBoolean("isLoggdIn",false);
+//        SharedPreferences.Editor editor=getSharedPreferences("",MODE_PRIVATE).edit();
+        if( isLoggedIn){
+            startActivity(new Intent(getApplicationContext(),MainActivity.class));
+            finish();
+            return;
+        }
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
         setUserRecordCount();
         insertUsers();
@@ -74,6 +82,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (user != null) {
                     if (user.getPassword().equals(etPassword.getText().toString())) {
                         Intent send = new Intent(LoginActivity.this, MainActivity.class);
+                        send.putExtra("finish",false);
                         startActivity(send);
                         finish();
                     }

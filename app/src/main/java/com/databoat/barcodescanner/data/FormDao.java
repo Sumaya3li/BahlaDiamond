@@ -28,4 +28,12 @@ public interface FormDao {
     @Query("SELECT * FROM data WHERE date_do = :date")
     LiveData<List<Form>> getListPrevious(String date);
 
+    @Query("SELECT * FROM data")
+    LiveData<List<Form>> getAll();
+
+    @Query("DELETE FROM data")
+    void deleteAll();
+
+    @Query("SELECT COUNT(*) FROM data")
+    int getCount();
 }

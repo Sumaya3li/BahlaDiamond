@@ -34,4 +34,12 @@ public class FormViewModel extends AndroidViewModel {
         return formRepository.getPreviousPerusal(id, date);
     }
 
+    public LiveData<List<Form>> getAll() {
+        return formRepository.getAll();
+    }
+
+    public void deleteAll() {
+        formRepository.deleteAll();
+    }
+
 }
