@@ -30,4 +30,8 @@ public class FormViewModel extends AndroidViewModel {
         return formRepository.getListPrevious(date);
     }
 
+    public LiveData<Form> getPreviousPerusal(String id, String date) {
+        return formRepository.getPreviousPerusal(id, date);
+    }
+
 }

@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ImageButton btnScan;
     private EditText tvIdts;
-    private EditText tvName;
+    private TextView tvName;
     private TextView tvPreviousReading;
     private EditText etCurrentReading;
     private EditText etNotes;
@@ -192,17 +192,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setPreviousReading(String id) {
-        formViewModel.getPreviousReadingById(id).observe(
-                MainActivity.this, new Observer<Form>() {
-                @Override
-                public void onChanged(Form form) {
-                    if (form != null) {
-                        tvPreviousReading.setText(form.getPerusal_current());
-                    } else {
-                        tvPreviousReading.setText("");
-                    }
-                    formViewModel.getPreviousReadingById(id).removeObserver(this);
+//        formViewModel.getPreviousReadingById(id).observe(
+//                MainActivity.this, new Observer<Form>() {
+//                @Override
+//                public void onChanged(Form form) {
+//                    if (form != null) {
+//                        tvPreviousReading.setText(form.getPerusal_current());
+//                    } else {
+//                        tvPreviousReading.setText("");
+//                    }
+//                    formViewModel.getPreviousReadingById(id).removeObserver(this);
+//                }
+//        });
+
+        formViewModel.getPreviousPerusal(id, getDate(false)).observe(
+                this, new Observer<Form>() {
+            @Override
+            public void onChanged(Form form) {
+                if (form != null) {
+                    tvPreviousReading.setText(form.getPerusal_current());
+                } else {
+                    tvPreviousReading.setText("");
                 }
+                formViewModel.getPreviousReadingById(id).removeObserver(this);
+            }
         });
     }
 

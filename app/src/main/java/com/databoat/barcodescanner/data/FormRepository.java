@@ -44,4 +44,8 @@ public class FormRepository {
         return formdoa.getListPrevious(date);
     }
 
+    public LiveData<Form> getPreviousPerusal(String id, String date) {
+        return formdoa.getPrevious(id, date);
+    }
+
 }

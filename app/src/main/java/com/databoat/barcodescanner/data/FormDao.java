@@ -22,6 +22,9 @@ public interface FormDao {
     @Query("SELECT * FROM data WHERE idst = :idst ORDER BY id DESC LIMIT 1")
     LiveData<Form> getLastReading(String idst);
 
+    @Query("SELECT * from data WHERE date_do = :date AND idst = :id ORDER BY id DESC LIMIT 1")
+    LiveData<Form> getPrevious(String id, String date);
+
     @Query("SELECT * FROM data WHERE date_do = :date")
     LiveData<List<Form>> getListPrevious(String date);
 
