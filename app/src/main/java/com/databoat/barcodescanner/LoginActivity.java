@@ -50,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
         if (SaveSharedPreference.getLoggedStatus(getApplicationContext())) {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
+            finish();
         } else {
             rootLayout.setVisibility(View.VISIBLE);
             setUserRecordCount();
