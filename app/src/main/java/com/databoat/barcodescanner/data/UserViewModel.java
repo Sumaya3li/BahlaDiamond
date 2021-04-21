@@ -33,4 +33,8 @@ public class UserViewModel extends AndroidViewModel {
     public LiveData<Integer> getRecordCount() {
         return userRepository.getRecordCount();
     }
+
+    public void deleteAll() {
+        userRepository.deletaAll();
+    }
 }

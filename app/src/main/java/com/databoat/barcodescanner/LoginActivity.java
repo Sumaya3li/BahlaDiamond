@@ -29,6 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     private int userRecordCount;
     private EditText etUsername;
     private EditText etPassword;
+    private ConstraintLayout rootLayout;
     private UserViewModel userViewModel;
 
     @Override
@@ -36,7 +37,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        ConstraintLayout rootLayout = findViewById(R.id.root_login_activity);
+        rootLayout = findViewById(R.id.root_login_activity);
 
         etUsername = findViewById(R.id.et_username);
         etPassword = findViewById(R.id.et_password);
@@ -46,16 +47,8 @@ public class LoginActivity extends AppCompatActivity {
 
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
-        // Check if UserResponse is Already Logged In
-        if (SaveSharedPreference.getLoggedStatus(getApplicationContext())) {
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
-            finish();
-        } else {
-            rootLayout.setVisibility(View.VISIBLE);
-            setUserRecordCount();
-            insertUsers();
-        }
+        setSharedPreferences();
+//        updateUsers();
     }
 
     @Override
@@ -69,6 +62,19 @@ public class LoginActivity extends AppCompatActivity {
 
     /****************************************** HELPER ********************************************/
 
+    private void setSharedPreferences() {
+        // Check if UserResponse is Already Logged In
+        if (SaveSharedPreference.getLoggedStatus(getApplicationContext())) {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            rootLayout.setVisibility(View.VISIBLE);
+            setUserRecordCount();
+            insertUsers();
+        }
+    }
+
     private void setUserRecordCount() {
         userViewModel.getRecordCount().observe(this, integer -> {
             userRecordCount = integer;
@@ -78,8 +84,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void insertUsers() {
         if (userRecordCount < 5) {
-            User user = new User("admin","12345");
-            userViewModel.insert(user);
             registerUsers();
         }
     }
@@ -116,16 +120,23 @@ public class LoginActivity extends AppCompatActivity {
     /**********************************************************************************************/
 
     private void registerUsers() {
+        User userAdmin = new User("admin","12345");
         User user1 = new User("admin1","12345");
         User user2 = new User("admin2","12345");
         User user3 = new User("admin3","12345");
         User user4 = new User("admin4","12345");
         User user5 = new User("admin5","12345");
 
-        User[] userList = { user1, user2, user3, user4, user5 };
+        User[] userList = { userAdmin, user1, user2, user3, user4, user5 };
 
         for (User user : userList) {
             userViewModel.insert(user);
         }
     }
+
+    private void updateUsers() {
+        userViewModel.deleteAll();
+        registerUsers();
+    }
+
 }

@@ -34,4 +34,10 @@ class UserRepository {
     public LiveData<Integer> getRecordCount() {
         return userdoa.recordCount();
     }
+
+    public void deletaAll() {
+        DatabaseHelper.databaseWriteExecutor.execute(() -> {
+            userdoa.deleteAll();
+        });
+    }
 }
