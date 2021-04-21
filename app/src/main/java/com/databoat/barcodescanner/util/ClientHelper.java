@@ -5,11 +5,13 @@ public class ClientHelper {
     private String idst;
     private String name_id;
     private String perusal_previous;
+    private String idstType;
 
-    public ClientHelper(String idst, String name_id, String perusal_previous) {
+    public ClientHelper(String idst, String name_id, String perusal_previous, String idstType) {
         this.idst = idst;
         this.name_id = name_id;
         this.perusal_previous = perusal_previous;
+        this.idstType = idstType;
     }
 
     public String getIdst() {
@@ -34,5 +36,13 @@ public class ClientHelper {
 
     public void setPerusal_previous(String perusal_previous) {
         this.perusal_previous = perusal_previous;
+    }
+
+    public String getIdstType() {
+        return idstType;
+    }
+
+    public void setIdstType(String idstType) {
+        this.idstType = idstType;
     }
 }

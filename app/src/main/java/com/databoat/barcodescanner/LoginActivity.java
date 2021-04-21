@@ -12,17 +12,22 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.databoat.barcodescanner.data.User;
 import com.databoat.barcodescanner.data.UserViewModel;
+import com.databoat.barcodescanner.util.SaveSharedPreference;
 import com.google.android.material.snackbar.Snackbar;
+
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK;
 
 public class LoginActivity extends AppCompatActivity {
 
     private int userRecordCount;
     private EditText etUsername;
     private EditText etPassword;
+    private ConstraintLayout rootLayout;
     private UserViewModel userViewModel;
 
     @Override
@@ -30,22 +35,25 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        rootLayout = findViewById(R.id.root_login_activity);
+
         etUsername = findViewById(R.id.et_username);
         etPassword = findViewById(R.id.et_password);
 
         Button btnLogin = findViewById(R.id.btn_login);
         btnLogin.setOnClickListener(new LogInButtonClicked());
-        SharedPreferences pref=getSharedPreferences("",MODE_PRIVATE);
-        boolean isLoggedIn=pref.getBoolean("isLoggdIn",false);
-//        SharedPreferences.Editor editor=getSharedPreferences("",MODE_PRIVATE).edit();
-        if( isLoggedIn){
-            startActivity(new Intent(getApplicationContext(),MainActivity.class));
-            finish();
-            return;
-        }
+
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
-        setUserRecordCount();
-        insertUsers();
+
+        // Check if UserResponse is Already Logged In
+        if (SaveSharedPreference.getLoggedStatus(getApplicationContext())) {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+        } else {
+            rootLayout.setVisibility(View.VISIBLE);
+            setUserRecordCount();
+            insertUsers();
+        }
     }
 
     @Override
@@ -82,7 +90,9 @@ public class LoginActivity extends AppCompatActivity {
                 if (user != null) {
                     if (user.getPassword().equals(etPassword.getText().toString())) {
                         Intent send = new Intent(LoginActivity.this, MainActivity.class);
-                        send.putExtra("finish",false);
+
+                        SaveSharedPreference.setLoggedIn(getApplicationContext(), true);
+                        send.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK |FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(send);
                         finish();
                     }

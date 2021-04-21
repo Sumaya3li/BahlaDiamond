@@ -75,7 +75,7 @@ public class MyCsvHelper {
                 // Split the line into different tokens (using the comma as a separator).
                 String[] tokens = line.split(",");
 
-                ClientHelper helper = new ClientHelper(tokens[0], tokens[1], tokens[2]);
+                ClientHelper helper = new ClientHelper(tokens[0], tokens[1], tokens[2], tokens[5]);
                 clientHelperList.add(helper);
             }
         } catch (IOException e1) {

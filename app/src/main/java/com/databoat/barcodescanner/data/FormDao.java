@@ -13,7 +13,7 @@ public interface FormDao {
     @Insert
     void insert(Form form);
 
-    @Query("SELECT * from data WHERE date_do = :date GROUP BY idst,date_do ORDER BY id")
+    @Query("SELECT * from data WHERE date_do = :date GROUP BY idst,date_do ORDER BY idst")
     LiveData<List<Form>> getDataByDate(String date);
 
     @Query("SELECT * FROM data ORDER BY id DESC LIMIT 1")

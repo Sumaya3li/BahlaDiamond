@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
         getFormData();
         updatePreviousPerusal();
 //        insertPreviousReadings();
+        insertData();
     }
 
     @Override
@@ -169,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
             int num = clientRepository.getNumFiles();
             fcount.set(num);
             insertClients(num);
+            insertClientData(num);
         });
         t.setPriority(10);
         t.start();
@@ -188,6 +190,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void insertClientData(int count) {
+        if (count < 3000) {
+            insertData();
+        }
+    }
+
     private void setClientName(String id) {
         clientViewModel.getClientByIdst(id).observe(MainActivity.this, client -> {
             if (client != null) {
@@ -201,7 +209,17 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO: NEW START
 
-
+    private void insertData() {
+        List<ClientHelper> helper = MyCsvHelper.getClientInfo(MainActivity.this);
+        for (ClientHelper client : helper) {
+            Log.d("PREVIOUS", client.getPerusal_previous());
+            formViewModel.insert(new Form(
+                    client.getIdst(), client.getName_id(), client.getPerusal_previous(),
+                    "0", client.getIdstType(), "0", "-",
+                    getDate(true))
+            );
+        }
+    }
 
 //    private void getAllClients() {
 //        clientViewModel.getAllClient().observe(this, this::setAllClients);
@@ -214,12 +232,11 @@ public class MainActivity extends AppCompatActivity {
     private void updatePreviousPerusal() {
         List<String> clientIds = MyCsvHelper.getClientIds(MainActivity.this);
         for (String id : clientIds) {
-            Log.d("CLIENT ID", id.trim());
             formViewModel.getPreviousReadingById(id.trim()).observe(this, new Observer<Form>() {
                 @Override
                 public void onChanged(Form form) {
                     if (form != null) {
-                        Log.d("CLIENT ID", form.getName_id().trim() + form.getDate_do());
+//                        Log.d("CLIENT ID", form.getName_id().trim() + form.getDate_do());
 //                        if (!form.getDate_do().equals(getDate(false))) {
 //                            formViewModel.insert(new Form(
 //                                    form.getIdst(), form.getName_id(), form.getPerusal_previous(),
@@ -270,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(Form form) {
                 if (form != null) {
-                    tvPreviousReading.setText(form.getPerusal_current());
+                    tvPreviousReading.setText(form.getPerusal_previous());
                 } else {
                     tvPreviousReading.setText("");
                 }
@@ -350,7 +367,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             String record = Arrays.asList(
-                    form.getIdst(), form.getName_id(), previousPerusal != null ? previousPerusal : "",
+                    form.getIdst(), form.getName_id(), form.getPerusal_previous(),
                     form.getPerusal_current(), form.getIdst_type(),
                     form.getConsumption(), form.getNote(), form.getDate_do()).toString();
 
