@@ -2,21 +2,19 @@ package com.databoat.barcodescanner.data;
 
 import android.content.Context;
 
-import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
-import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {User.class, Form.class, Client.class}, version = 9, exportSchema = false)
+@Database(entities = {User.class, Previous.class, Current.class}, version = 11, exportSchema = false)
 public abstract class DatabaseHelper extends RoomDatabase {
 
     public abstract UserDoa userDao();
-    public abstract FormDao formDao();
-    public abstract ClientDao clientDao();
+    public abstract PreviousDao previousDao();
+    public abstract CurrentDao currentDao();
 
     private static volatile DatabaseHelper INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;

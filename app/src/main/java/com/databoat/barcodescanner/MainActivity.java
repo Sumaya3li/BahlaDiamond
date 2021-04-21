@@ -25,12 +25,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.databoat.barcodescanner.data.Client;
-import com.databoat.barcodescanner.data.ClientRepository;
-import com.databoat.barcodescanner.data.ClientViewModel;
-import com.databoat.barcodescanner.data.Form;
-import com.databoat.barcodescanner.data.FormViewModel;
-import com.databoat.barcodescanner.util.ClientHelper;
+import com.databoat.barcodescanner.data.Current;
+import com.databoat.barcodescanner.data.CurrentViewModel;
+import com.databoat.barcodescanner.data.Previous;
+import com.databoat.barcodescanner.data.PreviousRepository;
+import com.databoat.barcodescanner.data.PreviousViewModel;
 import com.databoat.barcodescanner.util.MyCsvHelper;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -45,9 +44,10 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static com.databoat.barcodescanner.util.MyCsvHelper.getDate;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -59,18 +59,14 @@ public class MainActivity extends AppCompatActivity {
     private EditText etNotes;
     private Button btnSave;
     private Button btnExport;
-    private String currentIdstType;
 
-    private FormViewModel formViewModel;
-    private ClientViewModel clientViewModel;
+    private PreviousViewModel previousViewModel;
+    private CurrentViewModel currentViewModel;
 
-    private List<Form> currentFormData;
-    private List<Form> previousReadings;
+    private List<Current> currentReadings;
+    private List<Previous> previousReadings;
 
-    private List<Client> allClients;
-
-    private String previousPerusal;
-
+    private static final int FILENAME = R.raw.mobile;
     private static final int PERMISSION_REQUEST_CODE = 1000;
 
     @Override
@@ -87,18 +83,14 @@ public class MainActivity extends AppCompatActivity {
         btnSave.setOnClickListener(new SaveButtonClick());
         btnExport.setOnClickListener(v -> writeFile());
 
-        formViewModel = new ViewModelProvider(this).get(FormViewModel.class);
-        clientViewModel = new ViewModelProvider(this).get(ClientViewModel.class);
+        previousViewModel = new ViewModelProvider(this).get(PreviousViewModel.class);
+        currentViewModel = new ViewModelProvider(this).get(CurrentViewModel.class);
 
-        formViewModel.getListPrevious(getDate(false)).observe(this, this::getPreviousReadings);
+        previousViewModel.getPreviousList().observe(this, this::getPreviousReadings);
+        currentViewModel.getCurrentList().observe(this, this::getCurrentReadings);
 
-
-        getRecordCount();
-//        getAllClients();
-        getFormData();
-        updatePreviousPerusal();
-//        insertPreviousReadings();
-        insertData();
+        importPreviousReadings();
+//        updateFiles();
     }
 
     @Override
@@ -153,24 +145,21 @@ public class MainActivity extends AppCompatActivity {
         btnExport = findViewById(R.id.btn_export);
     }
 
-    private void getFormData() {
-        formViewModel.getAllFormData(getDate(true)).observe(this,
-                formList -> currentFormData = formList
-        );
-    }
-
-    private void getPreviousReadings(List<Form> previousReadings) {
+    private void getPreviousReadings(List<Previous> previousReadings) {
         this.previousReadings = previousReadings;
     }
 
-    private void getRecordCount() {
+    private void getCurrentReadings(List<Current> currentReadings) {
+        this.currentReadings = currentReadings;
+    }
+
+    private void importPreviousReadings() {
         final AtomicInteger fcount = new AtomicInteger();
-        ClientRepository clientRepository = new ClientRepository(getApplication());
+        PreviousRepository previousRepository = new PreviousRepository(getApplication());
         Thread t = new Thread(() -> {
-            int num = clientRepository.getNumFiles();
+            int num = previousRepository.getRecordCount();
             fcount.set(num);
-            insertClients(num);
-            insertClientData(num);
+            getPreviousReadings(num);
         });
         t.setPriority(10);
         t.start();
@@ -181,131 +170,36 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void insertClients(int count) {
+    private void getPreviousReadings(int count) {
         if (count == 0) {
-            List<Client> clients = MyCsvHelper.importClients(this);
-            for (Client client : clients) {
-                clientViewModel.insert(client);
+            List<Previous> clients = MyCsvHelper.importPreviousReadings(this, FILENAME);
+            for (Previous client : clients) {
+                previousViewModel.insert(client);
             }
         }
     }
 
-    private void insertClientData(int count) {
-        if (count < 3000) {
-            insertData();
-        }
-    }
-
     private void setClientName(String id) {
-        clientViewModel.getClientByIdst(id).observe(MainActivity.this, client -> {
+        previousViewModel.getClientByIdst(id).observe(MainActivity.this, client -> {
             if (client != null) {
-                tvName.setText(client.getName());
-                currentIdstType = client.getIdst_type();
+                tvName.setText(client.getNameId());
             } else {
                 tvName.setText("");
             }
         });
     }
 
-    // TODO: NEW START
-
-    private void insertData() {
-        List<ClientHelper> helper = MyCsvHelper.getClientInfo(MainActivity.this);
-        for (ClientHelper client : helper) {
-            Log.d("PREVIOUS", client.getPerusal_previous());
-            formViewModel.insert(new Form(
-                    client.getIdst(), client.getName_id(), client.getPerusal_previous(),
-                    "0", client.getIdstType(), "0", "-",
-                    getDate(true))
-            );
-        }
-    }
-
-//    private void getAllClients() {
-//        clientViewModel.getAllClient().observe(this, this::setAllClients);
-//    }
-//
-//    private void setAllClients(List<Client> allClients) {
-//        this.allClients = allClients;
-//    }
-
-    private void updatePreviousPerusal() {
-        List<String> clientIds = MyCsvHelper.getClientIds(MainActivity.this);
-        for (String id : clientIds) {
-            formViewModel.getPreviousReadingById(id.trim()).observe(this, new Observer<Form>() {
-                @Override
-                public void onChanged(Form form) {
-                    if (form != null) {
-//                        Log.d("CLIENT ID", form.getName_id().trim() + form.getDate_do());
-//                        if (!form.getDate_do().equals(getDate(false))) {
-//                            formViewModel.insert(new Form(
-//                                    form.getIdst(), form.getName_id(), form.getPerusal_previous(),
-//                                form.getPerusal_current(), form.getIdst_type(), form.getConsumption(),
-//                                form.getNote(), getDate(false)));
-//                        }
-                    }
-                }
-            });
-        }
-//        for (Client client : allClients) {
-//            formViewModel.getPreviousReadingById(client.getIdts()).observe(this, new Observer<Form>() {
-//                @Override
-//                public void onChanged(Form form) {
-//                    if (!form.getDate_do().equals(getDate(true))) {
-//                        formViewModel.insert(new Form(
-//                                form.getIdst(), form.getName_id(), form.getPerusal_previous(),
-//                                form.getPerusal_current(), form.getIdst_type(), form.getConsumption(),
-//                                form.getNote(), getDate(true)
-//                        ));
-//                    }
-//                }
-//            });
-//        }
-    }
-
-//    private void insertPreviousReadings() {
-//        List<ClientHelper> clientHelperList = MyCsvHelper.getClientInfo(MainActivity.this);
-//
-//        for (ClientHelper client : clientHelperList) {
-//            for (Form form : currentFormData) {
-//                if (client.getIdst().equals(form.getIdst())) {
-//                    break;
-//                } else {
-//                    formViewModel.insert(new Form(
-//                            client.getIdst(), client.getName_id(), client.getPerusal_previous(),
-//                            client.getPerusal_current(), client.getIdst_type(),
-//                            client.getConsumption(), client.getNote(), getDate(false)));
-//                }
-//            }
-//        }
-//    }
-    // TODO: NEW END
-
-    private void setPreviousReading(String id) {
-        formViewModel.getPreviousPerusal(id, getDate(false)).observe(
-                this, new Observer<Form>() {
+    private void setPreviousReading(String clientId) {
+        previousViewModel.getClientByIdst(clientId).observe(this, new Observer<Previous>() {
             @Override
-            public void onChanged(Form form) {
-                if (form != null) {
-                    tvPreviousReading.setText(form.getPerusal_previous());
+            public void onChanged(Previous previous) {
+                if (previous != null) {
+                    tvPreviousReading.setText(previous.getReading());
                 } else {
                     tvPreviousReading.setText("");
                 }
-                formViewModel.getPreviousReadingById(id).removeObserver(this);
             }
         });
-        //        formViewModel.getPreviousReadingById(id).observe(
-//                MainActivity.this, new Observer<Form>() {
-//                @Override
-//                public void onChanged(Form form) {
-//                    if (form != null) {
-//                        tvPreviousReading.setText(form.getPerusal_current());
-//                    } else {
-//                        tvPreviousReading.setText("");
-//                    }
-//                    formViewModel.getPreviousReadingById(id).removeObserver(this);
-//                }
-//        });
     }
 
     private void scanBarcode() {
@@ -335,8 +229,10 @@ public class MainActivity extends AppCompatActivity {
         String fileName = "BahlaDiamond";
         String csv = (
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                        + File.separator + fileName + "-" + getDate(true) + ".csv"
+                        + File.separator + fileName + "-" + getDate() + ".csv"
         );
+
+        Log.d("exportForm: ", csv);
 
         // Write Byte Order Mark (BOM) for UTF-8 at the start
         OutputStream os = null;
@@ -359,17 +255,21 @@ public class MainActivity extends AppCompatActivity {
         w.println(header);
 
         // Write csv file contents line by line
-        for (Form form : currentFormData) {
-            for (Form previous : previousReadings) {
-                if (previous.getIdst().equals(form.getIdst())) {
-                    previousPerusal = previous.getPerusal_current();
+        for (Previous previous : previousReadings) {
+            String currentPerusal = "0";
+            String note = "-";
+            for (Current current : currentReadings) {
+                if (previous.getIdst().equals(current.getIdst())) {
+                    currentPerusal = current.getPerusal();
+                    note = current.getNote();
+                    break;
                 }
             }
 
             String record = Arrays.asList(
-                    form.getIdst(), form.getName_id(), form.getPerusal_previous(),
-                    form.getPerusal_current(), form.getIdst_type(),
-                    form.getConsumption(), form.getNote(), form.getDate_do()).toString();
+                    previous.getIdst(), previous.getNameId(), previous.getReading(),
+                    currentPerusal, previous.getIdstType(), previous.getConsumption(),
+                    note, previous.getDateDo()).toString();
 
             w.println(record.substring(1, record.length() - 1));
         }
@@ -383,32 +283,6 @@ public class MainActivity extends AppCompatActivity {
                     Snackbar.LENGTH_LONG).show();
         }
     }
-
-    private String getDate(boolean isCurrent) {
-        Calendar now = Calendar.getInstance();
-        if (!isCurrent) {
-            return String.valueOf(now.get(Calendar.HOUR_OF_DAY) - 1);
-        }
-        return String.valueOf(now.get(Calendar.HOUR_OF_DAY));
-    }
-
-    //    private  String getDate() {
-//        SimpleDateFormat simpleDateFormat=new SimpleDateFormat(
-//                "MM/yyyy",
-//                Resources.getSystem().getConfiguration().locale
-//        );
-//        return simpleDateFormat.format(new Date());
-//    }
-
-//    private String getPreviousDate() {
-//        Calendar now=Calendar.getInstance();
-//        return String.valueOf(now.get(Calendar.HOUR_OF_DAY) - 1);
-//    }
-//
-//    private String getDate() {
-//        Calendar now=Calendar.getInstance();
-//        return String.valueOf(now.get(Calendar.HOUR_OF_DAY));
-//    }
 
     /***************************************** Button *********************************************/
 
@@ -428,17 +302,12 @@ public class MainActivity extends AppCompatActivity {
             if (note.isEmpty()) {
                 note = "-";
             }
-            Form newForm = new Form(
+            Current newPrevious = new Current(
                     tvIdts.getText().toString(),
-                    tvName.getText().toString(),
-                    tvPreviousReading.getText().toString(),
                     etCurrentReading.getText().toString(),
-                    currentIdstType,
-                    "0",
-                    note,
-                    getDate(true)
+                    note
             );
-            formViewModel.insert(newForm);
+            currentViewModel.insert(newPrevious);
         }
 
         private void clearForm() {
@@ -495,5 +364,22 @@ public class MainActivity extends AppCompatActivity {
             setPreviousReading(clientId);
         }
     };
+
+    /**********************************************************************************************/
+    /****************************************** ADMIN *********************************************/
+    /**********************************************************************************************/
+
+    private void updateFiles() {
+        deleteCurrentReadings();
+        deletePreviousReadings();
+    }
+
+    private void deletePreviousReadings() {
+        previousViewModel.deleteAll();
+    }
+
+    private void deleteCurrentReadings() {
+        currentViewModel.deleteAll();
+    }
 
 }

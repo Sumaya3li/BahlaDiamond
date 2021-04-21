@@ -20,6 +20,8 @@ import com.databoat.barcodescanner.data.UserViewModel;
 import com.databoat.barcodescanner.util.SaveSharedPreference;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.List;
+
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK;
 
 public class LoginActivity extends AppCompatActivity {
@@ -27,7 +29,6 @@ public class LoginActivity extends AppCompatActivity {
     private int userRecordCount;
     private EditText etUsername;
     private EditText etPassword;
-    private ConstraintLayout rootLayout;
     private UserViewModel userViewModel;
 
     @Override
@@ -35,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        rootLayout = findViewById(R.id.root_login_activity);
+        ConstraintLayout rootLayout = findViewById(R.id.root_login_activity);
 
         etUsername = findViewById(R.id.et_username);
         etPassword = findViewById(R.id.et_password);
@@ -75,11 +76,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void insertUsers() {
-        if (userRecordCount == 0) {
+        if (userRecordCount < 5) {
             User user = new User("admin","12345");
             userViewModel.insert(user);
+            registerUsers();
         }
     }
+
+    /***************************************** Button *********************************************/
 
     private class LogInButtonClicked implements View.OnClickListener {
 
@@ -104,5 +108,23 @@ public class LoginActivity extends AppCompatActivity {
             });
         }
 
+    }
+
+    /**********************************************************************************************/
+    /****************************************** ADMIN *********************************************/
+    /**********************************************************************************************/
+
+    private void registerUsers() {
+        User user1 = new User("admin1","12345");
+        User user2 = new User("admin2","12345");
+        User user3 = new User("admin3","12345");
+        User user4 = new User("admin4","12345");
+        User user5 = new User("admin5","12345");
+
+        User[] userList = { user1, user2, user3, user4, user5 };
+
+        for (User user : userList) {
+            userViewModel.insert(user);
+        }
     }
 }
