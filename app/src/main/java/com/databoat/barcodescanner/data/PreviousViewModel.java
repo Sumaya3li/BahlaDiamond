@@ -34,4 +34,8 @@ public class PreviousViewModel extends AndroidViewModel {
     public void deleteAll() {
         previousRepository.deleteAll();
     }
+
+    public void insertAll(List<Previous> previousList) {
+        previousRepository.insertAll(previousList);
+    }
 }

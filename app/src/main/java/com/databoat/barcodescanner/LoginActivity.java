@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.databoat.barcodescanner.data.User;
 import com.databoat.barcodescanner.data.UserViewModel;
+import com.databoat.barcodescanner.util.MyCsvHelper;
 import com.databoat.barcodescanner.util.SaveSharedPreference;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -29,6 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     private int userRecordCount;
     private EditText etUsername;
     private EditText etPassword;
+    private Button btnLogin;
     private ConstraintLayout rootLayout;
     private UserViewModel userViewModel;
 
@@ -36,17 +38,9 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        rootLayout = findViewById(R.id.root_login_activity);
-
-        etUsername = findViewById(R.id.et_username);
-        etPassword = findViewById(R.id.et_password);
-
-        Button btnLogin = findViewById(R.id.btn_login);
+        initViews();
         btnLogin.setOnClickListener(new LogInButtonClicked());
-
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
-
         setSharedPreferences();
 //        updateUsers();
     }
@@ -61,6 +55,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /****************************************** HELPER ********************************************/
+
+    private void initViews() {
+        etUsername = findViewById(R.id.et_username);
+        etPassword = findViewById(R.id.et_password);
+        btnLogin = findViewById(R.id.btn_login);
+        rootLayout = findViewById(R.id.root_login_activity);
+    }
 
     private void setSharedPreferences() {
         // Check if UserResponse is Already Logged In
@@ -120,20 +121,16 @@ public class LoginActivity extends AppCompatActivity {
     /**********************************************************************************************/
 
     private void registerUsers() {
-        User userAdmin = new User("admin","12345");
-        User user1 = new User("admin1","12345");
-        User user2 = new User("admin2","12345");
-        User user3 = new User("admin3","12345");
-        User user4 = new User("admin4","12345");
-        User user5 = new User("admin5","12345");
-
-        User[] userList = { userAdmin, user1, user2, user3, user4, user5 };
+        User[] userList = MyCsvHelper.editUsers();
 
         for (User user : userList) {
             userViewModel.insert(user);
         }
     }
 
+    /**
+     * Update user table.
+     * */
     private void updateUsers() {
         userViewModel.deleteAll();
         registerUsers();

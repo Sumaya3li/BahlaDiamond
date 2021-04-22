@@ -43,6 +43,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -66,8 +67,10 @@ public class MainActivity extends AppCompatActivity {
     private List<Current> currentReadings;
     private List<Previous> previousReadings;
 
-    private static final int FILENAME = R.raw.mobile;
     private static final int PERMISSION_REQUEST_CODE = 1000;
+
+    // Change filename
+    private static final int FILENAME = R.raw.mobile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,8 +102,10 @@ public class MainActivity extends AppCompatActivity {
         if (result != null) {
             if (result.getContents() != null) {
                 String clientId = result.getContents().trim();
+                tvIdts.setText(clientId);
                 setClientName(clientId);
                 setPreviousReading(clientId);
+                setCurrentReading(clientId);
             } else {
                 Snackbar.make(
                     findViewById(android.R.id.content),
@@ -171,11 +176,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getPreviousReadings(int count) {
-        if (count == 0) {
-            List<Previous> clients = MyCsvHelper.importPreviousReadings(this, FILENAME);
-            for (Previous client : clients) {
-                previousViewModel.insert(client);
-            }
+        if (count < 3790) {
+            deletePreviousReadings();
+            List<Previous> clients = MyCsvHelper.importReadings(this, FILENAME);
+            previousViewModel.insertAll(clients);
+            Log.d("getPreviousReadings", "COUNT : " + clients.size());
+//            for (Previous client : clients) {
+//                Log.d("getPreviousReadings: ", client.getIdst());
+//                previousViewModel.insert(client);
+//            }
         }
     }
 
@@ -197,6 +206,19 @@ public class MainActivity extends AppCompatActivity {
                     tvPreviousReading.setText(previous.getReading());
                 } else {
                     tvPreviousReading.setText("");
+                }
+            }
+        });
+    }
+
+    private void setCurrentReading(String clientId) {
+        currentViewModel.getClientByIdst(clientId).observe(this, new Observer<Current>() {
+            @Override
+            public void onChanged(Current current) {
+                if (current != null) {
+                    etCurrentReading.setText(current.getPerusal());
+                } else {
+                    etCurrentReading.setText("");
                 }
             }
         });
@@ -229,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
         String fileName = "BahlaDiamond";
         String csv = (
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                        + File.separator + fileName + "-" + getDate() + ".csv"
+                        + File.separator + fileName + " " + getDate() + ".csv"
         );
 
         Log.d("exportForm: ", csv);
@@ -314,8 +336,8 @@ public class MainActivity extends AppCompatActivity {
             tvIdts.setText("");
             tvName.setText("");
             tvPreviousReading.setText("");
-            etCurrentReading.setText("");
             etNotes.setText("");
+            setCurrentReading("NULL");
         }
     }
 
@@ -343,7 +365,6 @@ public class MainActivity extends AppCompatActivity {
         private void enableButton() {
             String id = tvIdts.getText().toString().trim();
             String currentReading = etCurrentReading.getText().toString().trim();
-//            String notes = etNotes.getText().toString().trim();
 
             boolean isEmpty = !id.isEmpty() && !currentReading.isEmpty();
             btnSave.setEnabled(isEmpty);
@@ -362,6 +383,7 @@ public class MainActivity extends AppCompatActivity {
             String clientId = tvIdts.getText().toString().trim();
             setClientName(clientId);
             setPreviousReading(clientId);
+            setCurrentReading(clientId);
         }
     };
 
@@ -369,6 +391,9 @@ public class MainActivity extends AppCompatActivity {
     /****************************************** ADMIN *********************************************/
     /**********************************************************************************************/
 
+    /**
+     * Update tables.
+     * */
     private void updateFiles() {
         deleteCurrentReadings();
         deletePreviousReadings();

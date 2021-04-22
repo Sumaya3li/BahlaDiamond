@@ -24,4 +24,7 @@ public interface PreviousDao {
 
     @Query("DELETE FROM previous")
     void deleteAll();
+
+    @Insert()
+    void insertAll(List<Previous> previousList);
 }

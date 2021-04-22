@@ -40,4 +40,10 @@ public class PreviousRepository {
             previousDao.deleteAll();
         });
     }
+
+    public void insertAll(List<Previous> previousList) {
+        DatabaseHelper.databaseWriteExecutor.execute(()->{
+            previousDao.insertAll(previousList);
+        });
+    }
 }
