@@ -22,8 +22,6 @@ import java.util.List;
 
 public class MyCsvHelper {
 
-    public static final boolean UPDATE_USERS = false;
-
     public static List<Previous> importReadings(Context context, int filename) {
         List<Previous> readings = new ArrayList<>();
         InputStream is = context.getResources().openRawResource(filename);
@@ -57,13 +55,14 @@ public class MyCsvHelper {
         return simpleDateFormat.format(new Date());
     }
 
-    public static User[] editUsers() {
-        User userAdmin = new User("admin","12345");
-        User user1 = new User("admin1","12345");
-        User user2 = new User("admin2","12345");
-        User user3 = new User("admin3","12345");
-        User user4 = new User("admin4","12345");
-        User user5 = new User("admin5","12345");
-        return new User[]{userAdmin, user1, user2, user3, user4, user5};
+    public static List<User> editUsers() {
+        List<User> userList = new ArrayList<>();
+        userList.add(new User("admin","12345"));
+        userList.add(new User("admin1","12345"));
+        userList.add(new User("admin2","12345"));
+        userList.add(new User("admin3","12345"));
+        userList.add(new User("admin4","12345"));
+        userList.add(new User("admin5","12345"));
+        return userList;
     }
 }

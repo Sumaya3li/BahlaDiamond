@@ -9,22 +9,16 @@ import java.util.List;
 class UserRepository {
 
     private UserDoa userdoa;
-    private LiveData<List<User>> allUsers;
 
     UserRepository(Application app) {
         DatabaseHelper db = DatabaseHelper.getDatabase(app);
         userdoa = db.userDao();
-        allUsers = userdoa.getAllUsers();
     }
 
-    void insert(User user) {
-        DatabaseHelper.databaseWriteExecutor.execute(() -> {
-            userdoa.insert(user);
+    public void insertAllUsers(List<User> userList) {
+        DatabaseHelper.databaseWriteExecutor.execute(()->{
+            userdoa.insertAll(userList);
         });
-    }
-
-    public LiveData<List<User>> getUsers() {
-        return allUsers;
     }
 
     public LiveData<User> getUserByName(String username) {
@@ -33,11 +27,5 @@ class UserRepository {
 
     public LiveData<Integer> getRecordCount() {
         return userdoa.recordCount();
-    }
-
-    public void deletaAll() {
-        DatabaseHelper.databaseWriteExecutor.execute(() -> {
-            userdoa.deleteAll();
-        });
     }
 }

@@ -1,44 +1,22 @@
 package com.databoat.barcodescanner.data;
 
-import android.content.Context;
-
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
-import androidx.room.Database;
 import androidx.room.Entity;
-import androidx.room.Index;
-import androidx.room.OnConflictStrategy;
 import androidx.room.PrimaryKey;
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-@Entity(tableName = "users",
-        indices={
-                @Index(value="id"),
-                @Index(value="name", unique = true)
-        })
-
+@Entity(tableName = "users")
 public class User {
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    private int id;
 
+    @PrimaryKey
+    @NonNull
     @ColumnInfo(name = "name")
     private String name;
 
     @ColumnInfo(name = "password")
     private String password;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
+    @NonNull
     public String getName() {
         return name;
     }
@@ -55,8 +33,7 @@ public class User {
         this.password = password;
     }
 
-    public User(String name, String password) {
-
+    public User(@NonNull String name, String password) {
         this.name = name;
         this.password = password;
     }

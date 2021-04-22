@@ -10,20 +10,14 @@ import java.util.List;
 public class UserViewModel extends AndroidViewModel {
 
     private final UserRepository userRepository;
-    private final LiveData<List<User>> allUsers;
 
     public UserViewModel(Application app){
         super(app);
         userRepository  = new UserRepository(app);
-        allUsers = userRepository.getUsers();
     }
 
-    public void insert(User user) {
-        userRepository.insert(user);
-    }
-
-    public LiveData<List<User>> getAllUsers() {
-        return allUsers;
+    public void insertAllUsers(List<User> userList) {
+        userRepository.insertAllUsers(userList);
     }
 
     public LiveData<User> getUserByName(String name) {
@@ -34,7 +28,4 @@ public class UserViewModel extends AndroidViewModel {
         return userRepository.getRecordCount();
     }
 
-    public void deleteAll() {
-        userRepository.deletaAll();
-    }
 }

@@ -42,7 +42,6 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new LogInButtonClicked());
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
         setSharedPreferences();
-//        updateUsers();
     }
 
     @Override
@@ -71,8 +70,8 @@ public class LoginActivity extends AppCompatActivity {
             finish();
         } else {
             rootLayout.setVisibility(View.VISIBLE);
+            updateUsers();
             setUserRecordCount();
-            insertUsers();
         }
     }
 
@@ -83,10 +82,9 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void insertUsers() {
-        if (userRecordCount < 5) {
-            registerUsers();
-        }
+    private void updateUsers() {
+        List<User> userList = MyCsvHelper.editUsers();
+        userViewModel.insertAllUsers(userList);
     }
 
     /***************************************** Button *********************************************/
@@ -114,26 +112,6 @@ public class LoginActivity extends AppCompatActivity {
             });
         }
 
-    }
-
-    /**********************************************************************************************/
-    /****************************************** ADMIN *********************************************/
-    /**********************************************************************************************/
-
-    private void registerUsers() {
-        User[] userList = MyCsvHelper.editUsers();
-
-        for (User user : userList) {
-            userViewModel.insert(user);
-        }
-    }
-
-    /**
-     * Update user table.
-     * */
-    private void updateUsers() {
-        userViewModel.deleteAll();
-        registerUsers();
     }
 
 }

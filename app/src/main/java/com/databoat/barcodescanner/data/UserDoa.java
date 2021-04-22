@@ -12,10 +12,7 @@ import java.util.List;
 public interface UserDoa {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(User user);
-
-    @Query("SELECT * FROM users")
-    LiveData<List<User>> getAllUsers();
+    void insertAll(List<User> users);
 
     @Query("SELECT * FROM users WHERE name = :username")
     LiveData<User> getUser(String username);
@@ -23,6 +20,4 @@ public interface UserDoa {
     @Query("SELECT COUNT(*) FROM users")
     LiveData<Integer> recordCount();
 
-    @Query("DELETE FROM users")
-    void deleteAll();
 }
