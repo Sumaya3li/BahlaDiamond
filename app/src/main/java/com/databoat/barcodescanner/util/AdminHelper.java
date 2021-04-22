@@ -23,6 +23,17 @@ public class AdminHelper {
     // Change filename
     private static final int FILENAME = R.raw.mobile;
 
+    public static List<User> editUsers() {
+        List<User> userList = new ArrayList<>();
+        userList.add(new User("admin","12345"));
+        userList.add(new User("admin1","12345"));
+        userList.add(new User("admin2","12345"));
+        userList.add(new User("admin3","12345"));
+        userList.add(new User("admin4","12345"));
+        userList.add(new User("admin5","12345"));
+        return userList;
+    }
+
     public static List<Previous> importReadings(Context context) {
         List<Previous> readings = new ArrayList<>();
         InputStream is = context.getResources().openRawResource(FILENAME);
@@ -46,17 +57,6 @@ public class AdminHelper {
         }
         readings.remove(0);
         return readings;
-    }
-
-    public static List<User> editUsers() {
-        List<User> userList = new ArrayList<>();
-        userList.add(new User("admin","12345"));
-        userList.add(new User("admin1","12345"));
-        userList.add(new User("admin2","12345"));
-        userList.add(new User("admin3","12345"));
-        userList.add(new User("admin4","12345"));
-        userList.add(new User("admin5","12345"));
-        return userList;
     }
 
     public static String getDate() {
