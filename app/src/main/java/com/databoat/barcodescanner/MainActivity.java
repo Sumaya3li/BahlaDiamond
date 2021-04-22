@@ -52,7 +52,7 @@ import static com.databoat.barcodescanner.util.AdminHelper.getDate;
 public class MainActivity extends AppCompatActivity {
 
     private ImageButton btnScan;
-    private EditText tvIdts;
+    private EditText tvIdst;
     private TextView tvName;
     private TextView tvPreviousReading;
     private EditText etCurrentReading;
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.activity_main);
         initViews();
 
         // Set button disabled initially
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         if (result != null) {
             if (result.getContents() != null) {
                 String clientId = result.getContents().trim();
-                tvIdts.setText(clientId);
+                tvIdst.setText(clientId);
                 setClientName(clientId);
                 setPreviousReading(clientId);
                 setCurrentReading(clientId);
@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 exportForm();
             } else {
-                Toast.makeText(this, tvIdts.getText().toString() + "طلب الاذن مرفوض", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, tvIdst.getText().toString() + "طلب الاذن مرفوض", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
     /****************************************** HELPER ********************************************/
 
     private void initViews() {
-        tvIdts = findViewById(R.id.tv_idts_value);
+        tvIdst = findViewById(R.id.tv_idts_value);
         tvName = findViewById(R.id.tv_name_value);
         tvPreviousReading = findViewById(R.id.tv_previous_reading_value);
         etCurrentReading = findViewById(R.id.et_current_reading);
@@ -190,27 +190,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setPreviousReading(String clientId) {
-        previousViewModel.getClientByIdst(clientId).observe(this, new Observer<Previous>() {
-            @Override
-            public void onChanged(Previous previous) {
-                if (previous != null) {
-                    tvPreviousReading.setText(previous.getReading());
-                } else {
-                    tvPreviousReading.setText("");
-                }
+        previousViewModel.getClientByIdst(clientId).observe(this, previous -> {
+            if (previous != null) {
+                tvPreviousReading.setText(previous.getReading());
+            } else {
+                tvPreviousReading.setText("");
             }
         });
     }
 
     private void setCurrentReading(String clientId) {
-        currentViewModel.getClientByIdst(clientId).observe(this, new Observer<Current>() {
-            @Override
-            public void onChanged(Current current) {
-                if (current != null) {
-                    etCurrentReading.setText(current.getPerusal());
-                } else {
-                    etCurrentReading.setText("");
-                }
+        currentViewModel.getClientByIdst(clientId).observe(this, current -> {
+            if (current != null) {
+                etCurrentReading.setText(current.getPerusal());
+            } else {
+                etCurrentReading.setText("");
             }
         });
     }
@@ -306,7 +300,7 @@ public class MainActivity extends AppCompatActivity {
             saveForm();
             clearForm();
             Toast.makeText(
-                    MainActivity.this, tvIdts.getText().toString() + " تم الحفظ",
+                    MainActivity.this, tvIdst.getText().toString() + " تم الحفظ",
                     Toast.LENGTH_LONG).show();
         }
 
@@ -316,7 +310,7 @@ public class MainActivity extends AppCompatActivity {
                 note = "-";
             }
             Current newPrevious = new Current(
-                    tvIdts.getText().toString(),
+                    tvIdst.getText().toString(),
                     etCurrentReading.getText().toString(),
                     note
             );
@@ -324,7 +318,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private void clearForm() {
-            tvIdts.setText("");
+            tvIdst.setText("");
             tvName.setText("");
             tvPreviousReading.setText("");
             etNotes.setText("");
@@ -335,9 +329,9 @@ public class MainActivity extends AppCompatActivity {
     /*************************************** TextWatcher ******************************************/
 
     private void setTextWatcher() {
-        tvIdts.addTextChangedListener(generalTextWatcher);
+        tvIdst.addTextChangedListener(generalTextWatcher);
         etCurrentReading.addTextChangedListener(generalTextWatcher);
-        tvIdts.addTextChangedListener(idTextWatcher);
+        tvIdst.addTextChangedListener(idTextWatcher);
 //        etNotes.addTextChangedListener(generalTextWatcher);
     }
 
@@ -354,7 +348,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private void enableButton() {
-            String id = tvIdts.getText().toString().trim();
+            String id = tvIdst.getText().toString().trim();
             String currentReading = etCurrentReading.getText().toString().trim();
 
             boolean isEmpty = !id.isEmpty() && !currentReading.isEmpty();
@@ -371,7 +365,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void afterTextChanged(Editable s) {
-            String clientId = tvIdts.getText().toString().trim();
+            String clientId = tvIdst.getText().toString().trim();
             setClientName(clientId);
             setPreviousReading(clientId);
             setCurrentReading(clientId);

@@ -8,8 +8,8 @@ import java.util.List;
 
 public class PreviousRepository {
 
-    private PreviousDao previousDao;
-    private LiveData<List<Previous>> allReadings;
+    private final PreviousDao previousDao;
+    private final LiveData<List<Previous>> allReadings;
 
     public PreviousRepository(Application app) {
         DatabaseHelper db = DatabaseHelper.getDatabase(app);
@@ -18,9 +18,7 @@ public class PreviousRepository {
     }
 
     void insert(Previous client) {
-        DatabaseHelper.databaseWriteExecutor.execute(()->{
-            previousDao.insert(client);
-        });
+        DatabaseHelper.databaseWriteExecutor.execute(()-> previousDao.insert(client));
     }
 
     public LiveData<List<Previous>> getAllReadings() {
@@ -35,15 +33,7 @@ public class PreviousRepository {
         return previousDao.getRecordCount();
     }
 
-    public void deleteAll() {
-        DatabaseHelper.databaseWriteExecutor.execute(()->{
-            previousDao.deleteAll();
-        });
-    }
-
     public void insertAll(List<Previous> previousList) {
-        DatabaseHelper.databaseWriteExecutor.execute(()->{
-            previousDao.insertAll(previousList);
-        });
+        DatabaseHelper.databaseWriteExecutor.execute(()-> previousDao.insertAll(previousList));
     }
 }

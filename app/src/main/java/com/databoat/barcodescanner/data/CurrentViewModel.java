@@ -10,8 +10,8 @@ import java.util.List;
 
 public class CurrentViewModel extends AndroidViewModel {
 
-    private CurrentRepository currentRepository;
-    private LiveData<List<Current>> allReadings;
+    private final CurrentRepository currentRepository;
+    private final LiveData<List<Current>> allReadings;
 
     public CurrentViewModel(@NonNull Application application) {
         super(application);
@@ -29,10 +29,6 @@ public class CurrentViewModel extends AndroidViewModel {
 
     public LiveData<Current> getClientByIdst(String id) {
         return currentRepository.getClientById(id);
-    }
-
-    public void deleteAll() {
-        currentRepository.deleteAll();
     }
 
 }

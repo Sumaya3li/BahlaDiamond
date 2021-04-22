@@ -8,8 +8,8 @@ import java.util.List;
 
 public class CurrentRepository {
 
-    private CurrentDao currentDao;
-    private LiveData<List<Current>> allReadings;
+    private final CurrentDao currentDao;
+    private final LiveData<List<Current>> allReadings;
 
     public CurrentRepository(Application app) {
         DatabaseHelper db = DatabaseHelper.getDatabase(app);
@@ -18,9 +18,7 @@ public class CurrentRepository {
     }
 
     void insert(Current client) {
-        DatabaseHelper.databaseWriteExecutor.execute(() -> {
-            currentDao.insert(client);
-        });
+        DatabaseHelper.databaseWriteExecutor.execute(() -> currentDao.insert(client));
     }
 
     public LiveData<List<Current>> getAllReadings() {
@@ -29,16 +27,6 @@ public class CurrentRepository {
 
     public LiveData<Current> getClientById(String id) {
         return currentDao.getClientById(id);
-    }
-
-    public int getRecordCount() {
-        return currentDao.getRecordCount();
-    }
-
-    public void deleteAll() {
-        DatabaseHelper.databaseWriteExecutor.execute(() -> {
-            currentDao.deleteAll();
-        });
     }
 
 }

@@ -20,9 +20,4 @@ public interface CurrentDao {
     @Query("SELECT * FROM current")
     LiveData<List<Current>> getAllClients();
 
-    @Query("SELECT COUNT(*) FROM current")
-    int getRecordCount();
-
-    @Query("DELETE FROM current")
-    void deleteAll();
 }

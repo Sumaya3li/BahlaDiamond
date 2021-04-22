@@ -3,6 +3,7 @@ package com.databoat.barcodescanner.data;
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
 @Dao
 public interface PreviousDao {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Previous client);
 
     @Query("SELECT * FROM previous WHERE idst = :clientId")
@@ -21,9 +22,6 @@ public interface PreviousDao {
 
     @Query("SELECT COUNT(*) FROM previous")
     int getRecordCount();
-
-    @Query("DELETE FROM previous")
-    void deleteAll();
 
     @Insert()
     void insertAll(List<Previous> previousList);
