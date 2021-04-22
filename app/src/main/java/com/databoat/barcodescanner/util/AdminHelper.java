@@ -5,7 +5,6 @@ import android.content.res.Resources;
 import android.util.Log;
 
 import com.databoat.barcodescanner.R;
-import com.databoat.barcodescanner.data.Current;
 import com.databoat.barcodescanner.data.Previous;
 import com.databoat.barcodescanner.data.User;
 
@@ -16,15 +15,17 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class MyCsvHelper {
+public class AdminHelper {
 
-    public static List<Previous> importReadings(Context context, int filename) {
+    // Change filename
+    private static final int FILENAME = R.raw.mobile;
+
+    public static List<Previous> importReadings(Context context) {
         List<Previous> readings = new ArrayList<>();
-        InputStream is = context.getResources().openRawResource(filename);
+        InputStream is = context.getResources().openRawResource(FILENAME);
         BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
         String line = "";
 
@@ -47,14 +48,6 @@ public class MyCsvHelper {
         return readings;
     }
 
-    public static String getDate() {
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat(
-                "MM-yyyy",
-                Resources.getSystem().getConfiguration().locale
-        );
-        return simpleDateFormat.format(new Date());
-    }
-
     public static List<User> editUsers() {
         List<User> userList = new ArrayList<>();
         userList.add(new User("admin","12345"));
@@ -64,5 +57,13 @@ public class MyCsvHelper {
         userList.add(new User("admin4","12345"));
         userList.add(new User("admin5","12345"));
         return userList;
+    }
+
+    public static String getDate() {
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat(
+                "MM-yyyy",
+                Resources.getSystem().getConfiguration().locale
+        );
+        return simpleDateFormat.format(new Date());
     }
 }

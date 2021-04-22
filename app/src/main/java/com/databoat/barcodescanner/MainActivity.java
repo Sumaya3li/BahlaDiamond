@@ -30,7 +30,7 @@ import com.databoat.barcodescanner.data.CurrentViewModel;
 import com.databoat.barcodescanner.data.Previous;
 import com.databoat.barcodescanner.data.PreviousRepository;
 import com.databoat.barcodescanner.data.PreviousViewModel;
-import com.databoat.barcodescanner.util.MyCsvHelper;
+import com.databoat.barcodescanner.util.AdminHelper;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -43,12 +43,11 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.databoat.barcodescanner.util.MyCsvHelper.getDate;
+import static com.databoat.barcodescanner.util.AdminHelper.getDate;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -68,9 +67,6 @@ public class MainActivity extends AppCompatActivity {
     private List<Previous> previousReadings;
 
     private static final int PERMISSION_REQUEST_CODE = 1000;
-
-    // Change filename
-    private static final int FILENAME = R.raw.mobile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,15 +172,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getPreviousReadings(int count) {
-        if (count < 3790) {
-            deletePreviousReadings();
-            List<Previous> clients = MyCsvHelper.importReadings(this, FILENAME);
+        List<Previous> clients = AdminHelper.importReadings(this);
+        if (count < clients.size()) {
             previousViewModel.insertAll(clients);
             Log.d("getPreviousReadings", "COUNT : " + clients.size());
-//            for (Previous client : clients) {
-//                Log.d("getPreviousReadings: ", client.getIdst());
-//                previousViewModel.insert(client);
-//            }
         }
     }
 
@@ -386,25 +377,5 @@ public class MainActivity extends AppCompatActivity {
             setCurrentReading(clientId);
         }
     };
-
-    /**********************************************************************************************/
-    /****************************************** ADMIN *********************************************/
-    /**********************************************************************************************/
-
-    /**
-     * Update tables.
-     * */
-    private void updateFiles() {
-        deleteCurrentReadings();
-        deletePreviousReadings();
-    }
-
-    private void deletePreviousReadings() {
-        previousViewModel.deleteAll();
-    }
-
-    private void deleteCurrentReadings() {
-        currentViewModel.deleteAll();
-    }
 
 }

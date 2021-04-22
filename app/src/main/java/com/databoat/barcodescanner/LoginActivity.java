@@ -2,7 +2,6 @@ package com.databoat.barcodescanner;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -17,7 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.databoat.barcodescanner.data.User;
 import com.databoat.barcodescanner.data.UserViewModel;
-import com.databoat.barcodescanner.util.MyCsvHelper;
+import com.databoat.barcodescanner.util.AdminHelper;
 import com.databoat.barcodescanner.util.SaveSharedPreference;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -83,7 +82,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void updateUsers() {
-        List<User> userList = MyCsvHelper.editUsers();
+        List<User> userList = AdminHelper.editUsers();
         userViewModel.insertAllUsers(userList);
     }
 

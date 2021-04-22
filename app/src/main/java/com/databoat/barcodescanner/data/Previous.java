@@ -1,5 +1,6 @@
 package com.databoat.barcodescanner.data;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
@@ -7,8 +8,8 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "previous")
 public class Previous {
 
-    @PrimaryKey(autoGenerate = true)
-    private int id;
+    @PrimaryKey()
+    @NonNull
     private String idst;
     private String nameId;
     private String reading;
@@ -17,8 +18,8 @@ public class Previous {
     private String note;
     private String dateDo;
 
-    public Previous(String idst, String nameId, String reading, String idstType, String consumption,
-                    String note, String dateDo) {
+    public Previous(@NonNull String idst, String nameId, String reading, String idstType,
+                    String consumption, String note, String dateDo) {
         this.idst = idst;
         this.nameId = nameId;
         this.reading = reading;
@@ -28,19 +29,12 @@ public class Previous {
         this.dateDo = dateDo;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
+    @NonNull
     public String getIdst() {
         return idst;
     }
 
-    public void setIdst(String idst) {
+    public void setIdst(@NonNull String idst) {
         this.idst = idst;
     }
 
