@@ -1,20 +1,16 @@
 <resources>
     <string name="app_name">Bahla Dimond</string>
-    <string name="hint_name">Name</string>
-    <string name="hint_email">Email</string>
-    <string name="hint_password">Password</string>
-    <string name="hint_confirm_password">Confirm Password</string>
-    <string name="text_login">Login</string>
-    <string name="text_register">Register</string>
-    <string name="error_message_name">Enter Full Name</string>
-    <string name="error_message_email">Enter Valid Username</string>
-    <string name="error_message_age">Enter Age</string>
-    <string name="error_message_password">Enter Password</string>
-    <string name="success_message">Registration Successful</string>
-    <string name="text_not_member">No account yet? Create one</string>
-    <string name="text_already_member">Already a member? Login</string>
-    <string name="error_email_exists">Email Already Exists</string>
-    <string name="error_password_match">Password Does Not Matches</string>
-    <string name="error_valid_email_password">Wrong Email or Password</string>
-    <string name="text_member">Already a member? Login</string>
+
+    <string name="login_username">اسم المستخدم</string>
+    <string name="login_password">كلمة المرور</string>
+    <string name="login_btnLogin">تسجيل الدخول</string>
+    <string name="main_title">قم بادخال البيانات</string>
+    <string name="main_idts">(Idts) رقم العقد</string>
+    <string name="main_scan">scan</string>
+    <string name="main_name">(Name) الاسم</string>
+    <string name="main_previous_reading">القراءة السابقة</string>
+    <string name="main_current_reading">القراءة الحالية</string>
+    <string name="main_notes">الملاحظات</string>
+    <string name="main_btnSave">حفظ</string>
+    <string name="main_export_csv">تحميل القراءات\nCSV</string>
 </resources>

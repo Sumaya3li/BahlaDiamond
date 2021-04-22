@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="قم بادخال البيانات"
+            android:text="@string/main_title"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.476"
@@ -41,7 +41,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true">
+                android:layout_alignParentStart="true">
 
                 <TextView
                     android:id="@+id/tv_idts"
@@ -51,7 +51,7 @@
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
                     android:maxLines="1"
-                    android:text="(Idts) رقم العقد" />
+                    android:text="@string/main_idts" />
 
                 <EditText
                     android:id="@+id/tv_idts_value"
@@ -61,16 +61,17 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="8dp"
                     android:maxLines="1"
-                    android:paddingEnd="8dp" />
+                    android:paddingEnd="8dp"
+                     />
             </LinearLayout>
 
             <ImageButton
                 android:id="@+id/btn_scan"
                 android:layout_width="37dp"
                 android:layout_height="37dp"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentEnd="true"
                 android:layout_marginStart="50dp"
-                android:contentDescription="scan"
+                android:contentDescription="@string/main_scan"
                 app:srcCompat="@android:drawable/ic_menu_camera" />
         </RelativeLayout>
 
@@ -93,7 +94,7 @@
                 android:layout_height="wrap_content"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
-                android:text=" (Name)  الاسم" />
+                android:text="@string/main_name" />
 
             <TextView
                 android:id="@+id/tv_name_value"
@@ -124,7 +125,7 @@
                 android:layout_height="wrap_content"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
-                android:text="القراءة السابقة" />
+                android:text="@string/main_previous_reading" />
 
             <TextView
                 android:id="@+id/tv_previous_reading_value"
@@ -155,7 +156,7 @@
                 android:layout_height="wrap_content"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
-                android:text="القراءة الحالية" />
+                android:text="@string/main_current_reading" />
 
             <EditText
                 android:id="@+id/et_current_reading"
@@ -185,7 +186,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingStart="8dp"
-                android:text="الملاحظات" />
+                android:text="@string/main_notes" />
 
             <EditText
                 android:id="@+id/et_notes"
@@ -204,7 +205,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:background="@drawable/custombutton"
-            android:text="حفظ"
+            android:text="@string/main_btnSave"
             android:textColor="#2CCC00"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -218,7 +219,7 @@
             android:layout_marginTop="24dp"
             android:layout_marginBottom="40dp"
             android:background="@drawable/custombutton"
-            android:text="تحميل القراءات&#10;CSV"
+            android:text="@string/main_export_csv"
             android:textColor="#CD1111"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

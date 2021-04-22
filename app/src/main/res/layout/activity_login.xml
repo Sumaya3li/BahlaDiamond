@@ -20,33 +20,6 @@
         app:srcCompat="@drawable/logo3"
         tools:srcCompat="@drawable/logo3" />
 
-<!--    <TextView-->
-<!--        style="@style/customFont"-->
-<!--        android:id="@+id/tv_username"-->
-<!--        android:layout_width="110dp"-->
-<!--        android:layout_height="25dp"-->
-<!--        android:layout_marginTop="48dp"-->
-<!--        android:layout_marginEnd="16dp"-->
-<!--        android:layout_marginRight="16dp"-->
-<!--        android:text="اسم المستخدم "-->
-<!--        android:textColor="#5F6161"-->
-<!--        android:textStyle="bold"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/iv_logo" />-->
-
-    <!--    <TextView-->
-<!--        style="@style/customFont"-->
-<!--        android:id="@+id/tv_password"-->
-<!--        android:layout_width="80dp"-->
-<!--        android:layout_height="24dp"-->
-<!--        android:layout_marginTop="44dp"-->
-<!--        android:layout_marginEnd="32dp"-->
-<!--        android:text="كلمة المرور"-->
-<!--        android:textColor="#6C6E6E"-->
-<!--        android:textStyle="bold"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/tv_username" />-->
-
     <EditText
         android:id="@+id/et_username"
         style="@style/customFont"
@@ -55,7 +28,7 @@
         android:layout_marginTop="60dp"
         android:background="@drawable/customborder"
         android:drawableStart="@android:drawable/ic_lock_power_off"
-        android:hint="اسم المستخدم"
+        android:hint="@string/login_username"
         android:gravity="end"
         android:textAlignment="viewEnd"
         android:textDirection="rtl"
@@ -63,8 +36,7 @@
         app:boxStrokeColor="#B3ADAD"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/iv_logo"
-        >
+        app:layout_constraintTop_toBottomOf="@+id/iv_logo">
 
     </EditText>
 
@@ -75,13 +47,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
         android:background="@drawable/customborder"
-        android:drawableLeft="@android:drawable/ic_partial_secure"
+        android:drawableStart="@android:drawable/ic_partial_secure"
         app:boxBackgroundMode="outline"
         app:boxStrokeColor="#B3ADAD"
         android:gravity="end"
         android:textAlignment="viewEnd"
         android:textDirection="rtl"
-        android:hint="كلمة المرور "
+        android:hint="@string/login_password"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -93,7 +65,7 @@
         android:layout_height="53dp"
         android:layout_marginTop="48dp"
         android:background="@drawable/custombutton"
-        android:text="تسجيل الدخول"
+        android:text="@string/login_btnLogin"
         android:textColor="@color/colorText"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -101,16 +73,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_password" />
 
-<!--    <TextView-->
-<!--        style="@style/customFont"-->
-<!--        android:id="@+id/textViewLinkRegister"-->
-<!--        android:layout_width="308dp"-->
-<!--        android:layout_height="28dp"-->
-<!--        android:layout_marginTop="32dp"-->
-<!--        android:text="لا تملك حساب بعد؟ تسجيل حساب جديد"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.349"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/btn_login" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
