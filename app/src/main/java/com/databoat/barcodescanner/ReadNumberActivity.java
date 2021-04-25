@@ -37,15 +37,6 @@ public class ReadNumberActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_read_number);
-
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(() -> {
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
         textRecognizer();
     }
 
@@ -57,6 +48,7 @@ public class ReadNumberActivity extends AppCompatActivity {
                 .build();
 
         surfaceView = findViewById(R.id.activity_surfaceView);
+
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
@@ -88,36 +80,46 @@ public class ReadNumberActivity extends AppCompatActivity {
             }
         });
 
-
-        textRecognizer.setProcessor(new Detector.Processor<TextBlock>() {
+        final Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
             @Override
-            public void release() {}
+            public void run() {
+                // Do something after 5s = 5000ms
+                textRecognizer.setProcessor(new Detector.Processor<TextBlock>() {
 
-            @Override
-            public void receiveDetections(Detector.Detections<TextBlock> detections) {
-
-                SparseArray<TextBlock> sparseArray = detections.getDetectedItems();
-                StringBuilder stringBuilder = new StringBuilder();
-
-                for (int i = 0; i<sparseArray.size(); ++i){
-                    TextBlock textBlock = sparseArray.valueAt(i);
-                    if (textBlock != null && textBlock.getValue() != null){
-                        stringBuilder.append(textBlock.getValue() + " ");
-                    }
-                }
-
-                final String stringText = stringBuilder.toString();
-
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new Runnable() {
                     @Override
-                    public void run() {
-                        stringResult = stringText;
-                        resultObtained();
+                    public void release() {
+                    }
+
+                    @Override
+                    public void receiveDetections(Detector.Detections<TextBlock> detections) {
+                        SparseArray<TextBlock> sparseArray = detections.getDetectedItems();
+                        StringBuilder stringBuilder = new StringBuilder();
+
+                        for (int i = 0; i<sparseArray.size(); ++i){
+                            TextBlock textBlock = sparseArray.valueAt(i);
+                            if (textBlock != null && textBlock.getValue() != null){
+                                stringBuilder.append(textBlock.getValue() + " ");
+                            }
+                        }
+
+                        final String stringText = stringBuilder.toString();
+
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                stringResult = stringText;
+                                resultObtained();
+                            }
+                        });
                     }
                 });
+
             }
-        });
+        }, 5000);
+
+
     }
 
     private void resultObtained() {
