@@ -1,24 +1,17 @@
 package com.databoat.barcodescanner;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Looper;
-import android.provider.MediaStore;
-import android.speech.tts.TextToSpeech;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -30,9 +23,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.databoat.barcodescanner.data.Current;
@@ -41,10 +31,6 @@ import com.databoat.barcodescanner.data.Previous;
 import com.databoat.barcodescanner.data.PreviousRepository;
 import com.databoat.barcodescanner.data.PreviousViewModel;
 import com.databoat.barcodescanner.util.AdminHelper;
-import com.google.android.gms.vision.CameraSource;
-import com.google.android.gms.vision.Detector;
-import com.google.android.gms.vision.text.TextBlock;
-import com.google.android.gms.vision.text.TextRecognizer;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -59,10 +45,8 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static android.Manifest.permission_group.CAMERA;
 import static com.databoat.barcodescanner.util.AdminHelper.getDate;
 
 public class MainActivity extends AppCompatActivity {
@@ -76,12 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnExport;
     private ImageButton btnScan;
     private ImageButton btnRead;
-    private SurfaceView surfaceView;
 
-    private CameraSource cameraSource;
-    private TextRecognizer textRecognizer;
-
-    private String stringResult = null;
     private PreviousViewModel previousViewModel;
     private CurrentViewModel currentViewModel;
 
@@ -134,6 +113,14 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
+        }
+
+        if (requestCode == ReadNumberActivity.CURRENT_REQ_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                String currentReading = data.getStringExtra(ReadNumberActivity.CURRENT_READING_KEY);
+                Log.d("--------------3", currentReading);
+                etCurrentReading.setText(currentReading.trim());
+            }
         }
     }
 
@@ -266,92 +253,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void readNumber() {
-        setContentView(R.layout.surfaceview);
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(() -> {
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
-        textRecognizer();
-    }
-
-    private void resultObtained() {
-        setContentView(R.layout.activity_main);
-        etCurrentReading = findViewById(R.id.et_current_reading);
-        etCurrentReading.setText(stringResult);
-    }
-
-    private void textRecognizer() {
-        textRecognizer = new TextRecognizer.Builder(getApplicationContext()).build();
-        cameraSource = new CameraSource.Builder(getApplicationContext(), textRecognizer)
-                .setRequestedPreviewSize(1280, 1024)
-                .build();
-
-        surfaceView = findViewById(R.id.surfaceView);
-        surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
-            @Override
-            public void surfaceCreated(SurfaceHolder holder) {
-                try {
-                    if (ActivityCompat.checkSelfPermission(
-                            getApplicationContext(),
-                            Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
-                        return;
-                    }
-                    cameraSource.start(surfaceView.getHolder());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {}
-
-            @Override
-            public void surfaceDestroyed(SurfaceHolder holder) {
-                cameraSource.stop();
-            }
-        });
-
-
-        textRecognizer.setProcessor(new Detector.Processor<TextBlock>() {
-            @Override
-            public void release() {}
-
-            @Override
-            public void receiveDetections(Detector.Detections<TextBlock> detections) {
-
-                SparseArray<TextBlock> sparseArray = detections.getDetectedItems();
-                StringBuilder stringBuilder = new StringBuilder();
-
-                for (int i = 0; i<sparseArray.size(); ++i){
-                    TextBlock textBlock = sparseArray.valueAt(i);
-                    if (textBlock != null && textBlock.getValue() != null){
-                        stringBuilder.append(textBlock.getValue() + " ");
-                    }
-                }
-
-                final String stringText = stringBuilder.toString();
-
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        stringResult = stringText;
-                        resultObtained();
-                    }
-                });
-            }
-        });
+        Intent intent = new Intent(getApplicationContext(), ReadNumberActivity.class);
+        startActivityForResult(intent, ReadNumberActivity.CURRENT_REQ_CODE);
     }
 
     private void writeFile() {
