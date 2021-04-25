@@ -137,11 +137,11 @@
                 android:paddingEnd="8dp" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/ll_current_reading"
+        <RelativeLayout
+            android:id="@+id/rl_current_reading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/customborder"
             android:layoutDirection="rtl"
             android:orientation="horizontal"
@@ -149,24 +149,39 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ll_previous_reading">
 
-            <TextView
-                android:id="@+id/tv_current_reading"
-                style="@style/customFont"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:text="@string/main_current_reading" />
+                android:layout_alignParentStart="true">
 
-            <EditText
-                android:id="@+id/et_current_reading"
-                style="@style/customFont"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:maxLines="1"
-                android:paddingEnd="8dp" />
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/tv_current_reading"
+                    style="@style/customFont"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:text="@string/main_current_reading" />
+
+                <EditText
+                    android:id="@+id/et_current_reading"
+                    style="@style/customFont"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:paddingEnd="8dp" />
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btn_read"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="50dp"
+                android:contentDescription="@string/main_scan"
+                app:srcCompat="@android:drawable/ic_menu_camera" />
+        </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/ll_notes"
@@ -178,7 +193,7 @@
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ll_current_reading">
+            app:layout_constraintTop_toBottomOf="@+id/rl_current_reading">
 
             <TextView
                 android:id="@+id/tv_notes"

@@ -4,13 +4,21 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
+import android.provider.MediaStore;
+import android.speech.tts.TextToSpeech;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -22,6 +30,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -31,6 +41,10 @@ import com.databoat.barcodescanner.data.Previous;
 import com.databoat.barcodescanner.data.PreviousRepository;
 import com.databoat.barcodescanner.data.PreviousViewModel;
 import com.databoat.barcodescanner.util.AdminHelper;
+import com.google.android.gms.vision.CameraSource;
+import com.google.android.gms.vision.Detector;
+import com.google.android.gms.vision.text.TextBlock;
+import com.google.android.gms.vision.text.TextRecognizer;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -45,13 +59,14 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static android.Manifest.permission_group.CAMERA;
 import static com.databoat.barcodescanner.util.AdminHelper.getDate;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ImageButton btnScan;
     private EditText tvIdst;
     private TextView tvName;
     private TextView tvPreviousReading;
@@ -59,7 +74,14 @@ public class MainActivity extends AppCompatActivity {
     private EditText etNotes;
     private Button btnSave;
     private Button btnExport;
+    private ImageButton btnScan;
+    private ImageButton btnRead;
+    private SurfaceView surfaceView;
 
+    private CameraSource cameraSource;
+    private TextRecognizer textRecognizer;
+
+    private String stringResult = null;
     private PreviousViewModel previousViewModel;
     private CurrentViewModel currentViewModel;
 
@@ -67,18 +89,19 @@ public class MainActivity extends AppCompatActivity {
     private List<Previous> previousReadings;
 
     private static final int PERMISSION_REQUEST_CODE = 1000;
+    private static final int CAMERA_REQUEST_CODE = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initViews();
-
         // Set button disabled initially
         btnSave.setEnabled(false);
         setTextWatcher();
 
         btnScan.setOnClickListener(v -> scanBarcode());
+        btnRead.setOnClickListener(v -> readNumber());
         btnSave.setOnClickListener(new SaveButtonClick());
         btnExport.setOnClickListener(v -> writeFile());
 
@@ -89,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
         currentViewModel.getCurrentList().observe(this, this::getCurrentReadings);
 
         importPreviousReadings();
+        cameraPermission();
 //        updateFiles();
     }
 
@@ -104,9 +128,9 @@ public class MainActivity extends AppCompatActivity {
                 setCurrentReading(clientId);
             } else {
                 Snackbar.make(
-                    findViewById(android.R.id.content),
-                    "يجب عليك ادخال البيانات الصحيحة",
-                    Snackbar.LENGTH_LONG).show();
+                        findViewById(android.R.id.content),
+                        "يجب عليك ادخال البيانات الصحيحة",
+                        Snackbar.LENGTH_LONG).show();
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -137,6 +161,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
     /****************************************** HELPER ********************************************/
 
     private void initViews() {
@@ -147,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
         etNotes = findViewById(R.id.et_notes);
         btnSave = findViewById(R.id.btn_save);
         btnScan = findViewById(R.id.btn_scan);
+        btnRead = findViewById(R.id.btn_read);
         btnExport = findViewById(R.id.btn_export);
     }
 
@@ -220,6 +250,108 @@ public class MainActivity extends AppCompatActivity {
         integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
         integrator.setPrompt("Scanning Code");
         integrator.initiateScan();
+    }
+
+    private void cameraPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
+            }
+        } else {
+            Toast.makeText(
+                    this, tvIdst.getText().toString() + "طلب الاذن مرفوض",
+                    Toast.LENGTH_LONG)
+                    .show();
+        }
+    }
+
+    private void readNumber() {
+        setContentView(R.layout.surfaceview);
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(() -> {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        textRecognizer();
+    }
+
+    private void resultObtained() {
+        setContentView(R.layout.activity_main);
+        etCurrentReading = findViewById(R.id.et_current_reading);
+        etCurrentReading.setText(stringResult);
+    }
+
+    private void textRecognizer() {
+        textRecognizer = new TextRecognizer.Builder(getApplicationContext()).build();
+        cameraSource = new CameraSource.Builder(getApplicationContext(), textRecognizer)
+                .setRequestedPreviewSize(1280, 1024)
+                .build();
+
+        surfaceView = findViewById(R.id.surfaceView);
+        surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder holder) {
+                try {
+                    if (ActivityCompat.checkSelfPermission(
+                            getApplicationContext(),
+                            Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
+                    }
+                    cameraSource.start(surfaceView.getHolder());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {}
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder holder) {
+                cameraSource.stop();
+            }
+        });
+
+
+        textRecognizer.setProcessor(new Detector.Processor<TextBlock>() {
+            @Override
+            public void release() {}
+
+            @Override
+            public void receiveDetections(Detector.Detections<TextBlock> detections) {
+
+                SparseArray<TextBlock> sparseArray = detections.getDetectedItems();
+                StringBuilder stringBuilder = new StringBuilder();
+
+                for (int i = 0; i<sparseArray.size(); ++i){
+                    TextBlock textBlock = sparseArray.valueAt(i);
+                    if (textBlock != null && textBlock.getValue() != null){
+                        stringBuilder.append(textBlock.getValue() + " ");
+                    }
+                }
+
+                final String stringText = stringBuilder.toString();
+
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        stringResult = stringText;
+                        resultObtained();
+                    }
+                });
+            }
+        });
     }
 
     private void writeFile() {
