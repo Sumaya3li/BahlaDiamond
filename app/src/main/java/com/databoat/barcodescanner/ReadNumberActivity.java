@@ -1,8 +1,5 @@
 package com.databoat.barcodescanner;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
@@ -14,8 +11,9 @@ import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.databoat.barcodescanner.data.CurrentViewModel;
-import com.databoat.barcodescanner.data.PreviousViewModel;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.text.TextBlock;
@@ -55,6 +53,7 @@ public class ReadNumberActivity extends AppCompatActivity {
         textRecognizer = new TextRecognizer.Builder(getApplicationContext()).build();
         cameraSource = new CameraSource.Builder(getApplicationContext(), textRecognizer)
                 .setRequestedPreviewSize(1280, 1024)
+                .setAutoFocusEnabled(true)
                 .build();
 
         surfaceView = findViewById(R.id.activity_surfaceView);
@@ -126,11 +125,6 @@ public class ReadNumberActivity extends AppCompatActivity {
         resultIntent.putExtra(CURRENT_READING_KEY, stringResult);
         setResult(Activity.RESULT_OK, resultIntent);
         finish();
-
-//        Intent i = new Intent();
-//        i.putExtra(CURRENT_READING_KEY, stringResult);
-//        setResult(CURRENT_REQ_CODE, i);
-//        finish();
     }
 
 }

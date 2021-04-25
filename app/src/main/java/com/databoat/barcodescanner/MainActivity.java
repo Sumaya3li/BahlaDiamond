@@ -113,10 +113,12 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
+            Log.d("--------------1", String.valueOf(requestCode));
         }
 
         if (requestCode == ReadNumberActivity.CURRENT_REQ_CODE) {
             if (resultCode == Activity.RESULT_OK) {
+                Log.d("--------------2", String.valueOf(requestCode));
                 String currentReading = data.getStringExtra(ReadNumberActivity.CURRENT_READING_KEY);
                 Log.d("--------------3", currentReading);
                 etCurrentReading.setText(currentReading.trim());
