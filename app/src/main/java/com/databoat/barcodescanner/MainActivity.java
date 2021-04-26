@@ -366,6 +366,7 @@ public class MainActivity extends AppCompatActivity {
             tvPreviousReading.setText("");
             etNotes.setText("");
             setCurrentReading("NULL");
+            etCurrentReading.setText("");
         }
     }
 
