@@ -26,7 +26,7 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="MissingConstraints" />
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/rl_contract_number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,42 +38,49 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_main_title">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/tv_idts"
+                style="@style/customFont"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true">
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="8dp"
+                android:maxLines="1"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="@string/main_idts"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/tv_idts"
-                    style="@style/customFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:maxLines="1"
-                    android:text="@string/main_idts" />
-
-                <EditText
-                    android:id="@+id/tv_idts_value"
-                    style="@style/customFont"
-                    android:layout_width="200dp"
-                    android:inputType="number"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="8dp"
-                    android:maxLines="1"
-                    android:paddingEnd="8dp"
-                     />
-            </LinearLayout>
+            <EditText
+                android:id="@+id/tv_idts_value"
+                style="@style/customFont"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLines="1"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@+id/btn_scan"
+                app:layout_constraintRight_toLeftOf="@+id/tv_idts"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
                 android:id="@+id/btn_scan"
                 android:layout_width="37dp"
                 android:layout_height="37dp"
                 android:layout_alignParentEnd="true"
-                android:layout_marginStart="50dp"
+                android:layout_marginTop="8dp"
                 android:contentDescription="@string/main_scan"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@android:drawable/ic_menu_camera" />
-        </RelativeLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
             android:id="@+id/ll_name"
@@ -137,7 +144,7 @@
                 android:paddingEnd="8dp" />
         </LinearLayout>
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/rl_current_reading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -149,29 +156,32 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ll_previous_reading">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/tv_current_reading"
+                style="@style/customFont"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true">
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="@string/main_current_reading"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/tv_current_reading"
-                    style="@style/customFont"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:text="@string/main_current_reading" />
-
-                <EditText
-                    android:id="@+id/et_current_reading"
-                    style="@style/customFont"
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:maxLines="1"
-                    android:paddingEnd="8dp" />
-            </LinearLayout>
+            <EditText
+                android:id="@+id/et_current_reading"
+                style="@style/customFont"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLines="1"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@+id/btn_read"
+                app:layout_constraintRight_toLeftOf="@+id/tv_current_reading"
+                app:layout_constraintTop_toTopOf="parent"/>
 
             <ImageButton
                 android:id="@+id/btn_read"
@@ -180,8 +190,12 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="50dp"
                 android:contentDescription="@string/main_scan"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@android:drawable/ic_menu_camera" />
-        </RelativeLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
             android:id="@+id/ll_notes"
