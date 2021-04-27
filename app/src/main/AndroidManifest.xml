@@ -25,7 +25,7 @@
         android:roundIcon="@drawable/logo3"
         android:supportsRtl="true"
         android:theme="@style/Theme.BarcodeScanner">
-        <activity android:name=".ReadNumberActivity"></activity>
+        <activity android:name=".ReadPerusalActivity"></activity>
         <activity android:name=".MainActivity" />
         <activity android:name=".LoginActivity">
             <intent-filter>

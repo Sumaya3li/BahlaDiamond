@@ -2,6 +2,7 @@ package com.databoat.barcodescanner;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -32,6 +33,9 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnLogin;
     private ConstraintLayout rootLayout;
     private UserViewModel userViewModel;
+
+    public static final String PREF_KEY = "LOGIN_KEY";
+    public static final String USER_KEY = "USERNAME";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +103,11 @@ public class LoginActivity extends AppCompatActivity {
                         Intent send = new Intent(LoginActivity.this, MainActivity.class);
 
                         SaveSharedPreference.setLoggedIn(getApplicationContext(), true);
+                        SharedPreferences preferencesPut = getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = preferencesPut.edit();
+                        editor.putString(USER_KEY, username);
+                        editor.apply();
+
                         send.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK |FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(send);
                         finish();

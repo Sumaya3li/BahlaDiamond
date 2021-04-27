@@ -48,7 +48,7 @@ public class AdminHelper {
                 // Ensure that the column attributes are in the correct order.
                 Previous client = new Previous(
                         tokens[0], tokens[1], tokens[2], tokens[5],
-                        tokens[6], tokens[7], getDate());
+                        tokens[6], tokens[7], getDate(true));
                 readings.add(client);
             }
         } catch (IOException e1) {
@@ -59,11 +59,12 @@ public class AdminHelper {
         return readings;
     }
 
-    public static String getDate() {
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat(
+    public static String getDate(boolean isDash) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
                 "MM-yyyy",
                 Resources.getSystem().getConfiguration().locale
         );
-        return simpleDateFormat.format(new Date());
+        String date = simpleDateFormat.format(new Date());
+        return isDash ? date : date.replace("-", "");
     }
 }

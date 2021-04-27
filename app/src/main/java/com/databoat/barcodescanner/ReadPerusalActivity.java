@@ -21,7 +21,7 @@ import com.google.android.gms.vision.text.TextRecognizer;
 
 import java.io.IOException;
 
-public class ReadNumberActivity extends AppCompatActivity {
+public class ReadPerusalActivity extends AppCompatActivity {
 
     private SurfaceView surfaceView;
 
@@ -30,13 +30,13 @@ public class ReadNumberActivity extends AppCompatActivity {
 
     private String stringResult = null;
 
-    public static final String CURRENT_READING_KEY = "CURRENT_READING";
+    public static final String CURRENT_PERUSAL_KEY = "CURRENT_READING";
     public static final int CURRENT_REQ_CODE = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_read_number);
+        setContentView(R.layout.activity_read_perusal);
         textRecognizer();
     }
 
@@ -56,13 +56,6 @@ public class ReadNumberActivity extends AppCompatActivity {
                     if (ActivityCompat.checkSelfPermission(
                             getApplicationContext(),
                             Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
                         return;
                     }
                     cameraSource.start(surfaceView.getHolder());
@@ -84,7 +77,6 @@ public class ReadNumberActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                // Do something after 5s = 5000ms
                 textRecognizer.setProcessor(new Detector.Processor<TextBlock>() {
 
                     @Override
@@ -124,7 +116,7 @@ public class ReadNumberActivity extends AppCompatActivity {
 
     private void resultObtained() {
         Intent resultIntent = new Intent();
-        resultIntent.putExtra(CURRENT_READING_KEY, stringResult);
+        resultIntent.putExtra(CURRENT_PERUSAL_KEY, stringResult);
         setResult(Activity.RESULT_OK, resultIntent);
         finish();
     }

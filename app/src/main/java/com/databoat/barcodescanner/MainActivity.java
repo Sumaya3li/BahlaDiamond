@@ -4,12 +4,12 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -94,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
 
         importPreviousReadings();
         cameraPermission();
-//        updateFiles();
     }
 
     @Override
@@ -118,10 +117,10 @@ public class MainActivity extends AppCompatActivity {
             Log.d("--------------1", String.valueOf(requestCode));
         }
 
-        if (requestCode == ReadNumberActivity.CURRENT_REQ_CODE) {
+        if (requestCode == ReadPerusalActivity.CURRENT_REQ_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 Log.d("--------------2", String.valueOf(requestCode));
-                String currentReading = data.getStringExtra(ReadNumberActivity.CURRENT_READING_KEY);
+                String currentReading = data.getStringExtra(ReadPerusalActivity.CURRENT_PERUSAL_KEY);
                 Log.d("--------------3", currentReading);
                 etCurrentReading.setText(currentReading.trim());
             }
@@ -169,6 +168,13 @@ public class MainActivity extends AppCompatActivity {
         btnScan = findViewById(R.id.btn_scan);
         btnRead = findViewById(R.id.btn_read);
         btnExport = findViewById(R.id.btn_export);
+    }
+
+    private String getUsername() {
+        SharedPreferences prfs = getSharedPreferences(LoginActivity.PREF_KEY, Context.MODE_PRIVATE);
+        String username = prfs.getString(LoginActivity.USER_KEY, "");
+        Log.d("getUsername", username);
+        return username;
     }
 
     private void getPreviousReadings(List<Previous> previousReadings) {
@@ -257,8 +263,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void readNumber() {
-        Intent intent = new Intent(getApplicationContext(), ReadNumberActivity.class);
-        startActivityForResult(intent, ReadNumberActivity.CURRENT_REQ_CODE);
+        Intent intent = new Intent(getApplicationContext(), ReadPerusalActivity.class);
+        startActivityForResult(intent, ReadPerusalActivity.CURRENT_REQ_CODE);
     }
 
     private void writeFile() {
@@ -279,7 +285,8 @@ public class MainActivity extends AppCompatActivity {
         String fileName = "BahlaDiamond";
         String csv = (
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                        + File.separator + fileName + " " + getDate() + ".csv"
+                        + File.separator + "BahlaDiamond " + getUsername() +
+                        " " + getDate(false) + ".csv"
         );
 
         Log.d("exportForm: ", csv);
