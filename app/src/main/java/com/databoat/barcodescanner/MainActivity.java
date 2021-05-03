@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -282,14 +281,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void exportForm() {
         String header = "idst, NAMEID, Perusallast, Perusalfirst, idsttype, Consumption, NOTE, MONTH/YEAR";
-        String fileName = "BahlaDiamond";
+        String fileName = "BahlaDiamond" + getDate(false);
         String csv = (
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                        + File.separator + "BahlaDiamond " + getUsername() +
-                        " " + getDate(false) + ".csv"
-        );
-
-        Log.d("exportForm: ", csv);
+                        + File.separator + fileName + ".csv");
 
         // Write Byte Order Mark (BOM) for UTF-8 at the start
         OutputStream os = null;
@@ -349,6 +344,7 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
             saveForm();
             clearForm();
+            tvIdst.requestFocus();
             Toast.makeText(
                     MainActivity.this, tvIdst.getText().toString() + " تم الحفظ",
                     Toast.LENGTH_LONG).show();
