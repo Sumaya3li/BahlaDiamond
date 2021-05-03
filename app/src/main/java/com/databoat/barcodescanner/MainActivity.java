@@ -169,12 +169,15 @@ public class MainActivity extends AppCompatActivity {
         btnExport = findViewById(R.id.btn_export);
     }
 
-    private String getUsername() {
-        SharedPreferences prfs = getSharedPreferences(LoginActivity.PREF_KEY, Context.MODE_PRIVATE);
-        String username = prfs.getString(LoginActivity.USER_KEY, "");
-        Log.d("getUsername", username);
-        return username;
-    }
+    /**
+     * Returns the users account name.
+     * */
+//    private String getUsername() {
+//        SharedPreferences prfs = getSharedPreferences(LoginActivity.PREF_KEY, Context.MODE_PRIVATE);
+//        String username = prfs.getString(LoginActivity.USER_KEY, "");
+//        Log.d("getUsername", username);
+//        return username;
+//    }
 
     private void getPreviousReadings(List<Previous> previousReadings) {
         this.previousReadings = previousReadings;
