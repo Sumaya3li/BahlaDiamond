@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -283,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void exportForm() {
-        String header = "idst, NAMEID, Perusallast, Perusalfirst, idsttype, Consumption, NOTE, MONTH/YEAR";
+        String header = "idst, NAMEID, Perusallast, Perusalfirst, idsttype, Consumption, NOTE, TIME";
         String fileName = "BahlaDiamond" + getDate(false);
         String csv = (
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
@@ -313,10 +312,12 @@ public class MainActivity extends AppCompatActivity {
         for (Previous previous : previousReadings) {
             String currentPerusal = "0";
             String note = "-";
+            String time = "";
             for (Current current : currentReadings) {
                 if (previous.getIdst().equals(current.getIdst())) {
                     currentPerusal = current.getPerusal();
                     note = current.getNote();
+                    time = current.getTime();
                     break;
                 }
             }
@@ -324,7 +325,7 @@ public class MainActivity extends AppCompatActivity {
             String record = Arrays.asList(
                     previous.getIdst(), previous.getNameId(), previous.getReading(),
                     currentPerusal, previous.getIdstType(), previous.getConsumption(),
-                    note, previous.getDateDo()).toString();
+                    note, time).toString();
 
             w.println(record.substring(1, record.length() - 1));
         }
@@ -361,7 +362,8 @@ public class MainActivity extends AppCompatActivity {
             Current newPrevious = new Current(
                     tvIdst.getText().toString(),
                     etCurrentReading.getText().toString(),
-                    note
+                    note,
+                    AdminHelper.getDateTime()
             );
             currentViewModel.insert(newPrevious);
         }

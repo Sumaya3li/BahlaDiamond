@@ -12,11 +12,13 @@ public class Current {
     private String idst;
     private String perusal;
     private String note;
+    private String time;
 
-    public Current(@NonNull String idst, String perusal, String note) {
+    public Current(@NonNull String idst, String perusal, String note, String time) {
         this.idst = idst;
         this.perusal = perusal;
         this.note = note;
+        this.time = time;
     }
 
     @NonNull
@@ -42,5 +44,13 @@ public class Current {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 }

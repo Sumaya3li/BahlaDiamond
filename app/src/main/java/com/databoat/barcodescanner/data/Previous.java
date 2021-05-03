@@ -15,17 +15,15 @@ public class Previous {
     private String idstType;
     private String consumption;
     private String note;
-    private String dateDo;
 
     public Previous(@NonNull String idst, String nameId, String reading, String idstType,
-                    String consumption, String note, String dateDo) {
+                    String consumption, String note) {
         this.idst = idst;
         this.nameId = nameId;
         this.reading = reading;
         this.idstType = idstType;
         this.consumption = consumption;
         this.note = note;
-        this.dateDo = dateDo;
     }
 
     @NonNull
@@ -75,13 +73,5 @@ public class Previous {
 
     public void setNote(String note) {
         this.note = note;
-    }
-
-    public String getDateDo() {
-        return dateDo;
-    }
-
-    public void setDateDo(String dateDo) {
-        this.dateDo = dateDo;
     }
 }

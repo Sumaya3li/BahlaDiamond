@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class AdminHelper {
 
@@ -48,7 +49,7 @@ public class AdminHelper {
                 // Ensure that the column attributes are in the correct order.
                 Previous client = new Previous(
                         tokens[0], tokens[1], tokens[2], tokens[5],
-                        tokens[6], tokens[7], getDate(true));
+                        tokens[6], tokens[7]);
                 readings.add(client);
             }
         } catch (IOException e1) {
@@ -66,5 +67,9 @@ public class AdminHelper {
         );
         String date = simpleDateFormat.format(new Date());
         return isDash ? date : date.replace("-", "");
+    }
+
+    public static String getDateTime() {
+        return new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
     }
 }
