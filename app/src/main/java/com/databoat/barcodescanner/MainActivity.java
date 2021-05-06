@@ -2,12 +2,18 @@ package com.databoat.barcodescanner;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.DownloadManager;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -34,15 +40,19 @@ import com.databoat.barcodescanner.util.AdminHelper;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.opencsv.CSVReader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -75,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initViews();
+
         // Set button disabled initially
         btnSave.setEnabled(false);
         setTextWatcher();
@@ -117,9 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == ReadPerusalActivity.CURRENT_REQ_CODE) {
             if (resultCode == Activity.RESULT_OK) {
-                Log.d("--------------2", String.valueOf(requestCode));
                 String currentReading = data.getStringExtra(ReadPerusalActivity.CURRENT_PERUSAL_KEY);
-                Log.d("--------------3", currentReading);
                 etCurrentReading.setText(currentReading.trim());
             }
         }
@@ -384,7 +393,6 @@ public class MainActivity extends AppCompatActivity {
         tvIdst.addTextChangedListener(generalTextWatcher);
         etCurrentReading.addTextChangedListener(generalTextWatcher);
         tvIdst.addTextChangedListener(idTextWatcher);
-//        etNotes.addTextChangedListener(generalTextWatcher);
     }
 
     private final TextWatcher generalTextWatcher = new TextWatcher() {

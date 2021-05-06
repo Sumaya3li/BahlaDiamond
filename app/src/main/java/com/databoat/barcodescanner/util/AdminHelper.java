@@ -2,8 +2,10 @@ package com.databoat.barcodescanner.util;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.util.Log;
 
+import com.databoat.barcodescanner.MainActivity;
 import com.databoat.barcodescanner.R;
 import com.databoat.barcodescanner.data.Previous;
 import com.databoat.barcodescanner.data.User;
@@ -12,7 +14,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,8 +56,8 @@ public class AdminHelper {
 
                 // Ensure that the column attributes are in the correct order.
                 Previous client = new Previous(
-                        tokens[0], tokens[1], tokens[2], tokens[5],
-                        tokens[6], tokens[7]);
+                        tokens[0], tokens[1], tokens[2],
+                        tokens[5], tokens[6], tokens[7]);
                 readings.add(client);
             }
         } catch (IOException e1) {
@@ -70,6 +78,9 @@ public class AdminHelper {
     }
 
     public static String getDateTime() {
-        return new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
+        return new SimpleDateFormat(
+                "dd-MM-yyyy HH:mm:ss",
+                Locale.getDefault()).format(new Date()
+        );
     }
 }
