@@ -9,10 +9,10 @@ import androidx.room.RoomDatabase;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {User.class, Previous.class, Current.class}, version = 16, exportSchema = false)
+@Database(entities = {User.class, Previous.class, Current.class}, version = 17, exportSchema = false)
 public abstract class DatabaseHelper extends RoomDatabase {
 
-    public abstract UserDoa userDao();
+    public abstract UserDao userDao();
     public abstract PreviousDao previousDao();
     public abstract CurrentDao currentDao();
 
@@ -26,7 +26,7 @@ public abstract class DatabaseHelper extends RoomDatabase {
             synchronized (DatabaseHelper.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            DatabaseHelper.class, "BahlaDimond")
+                            DatabaseHelper.class, "bahla_diamond")
                             .fallbackToDestructiveMigration()
                             .build();
                 }

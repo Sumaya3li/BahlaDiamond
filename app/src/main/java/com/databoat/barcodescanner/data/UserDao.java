@@ -9,7 +9,7 @@ import androidx.room.Query;
 import java.util.List;
 
 @Dao
-public interface UserDoa {
+public interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<User> users);
